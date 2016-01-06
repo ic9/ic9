@@ -1,4 +1,5 @@
 # Directories #
+bin/
 build/
 dist/
 ${js.dic.dir}/
