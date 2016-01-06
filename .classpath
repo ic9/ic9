@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/java-8-oracle"/>
+	<classpathentry kind="lib" path="lib-depends/jansi/jansi-1.12-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.codec/commons-codec-1.9.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.configuration/commons-configuration-1.10.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.httpclient/httpclient-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.httpclient/httpclient-cache-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.httpclient/httpclient-win-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.httpclient/httpcore-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.httpclient/httpmime-4.4.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.lang/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.logging/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-http-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-server-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-util-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/servlet-api-3.1.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-io-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/javax-websocket-server-impl-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/javax.websocket-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/websocket-api-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/websocket-common-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/websocket-server-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/websocket/websocket-servlet-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-servlet-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-security-9.3.5.v20151012.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

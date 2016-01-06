@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Get path to Ic9 jar
+case "$OSTYPE" in
+	darwin*)  
+		pushd . > /dev/null
+		SPATH="${BASH_SOURCE[0]}";
+		  while([ -h "${SCRIPT_PATH}" ]) do 
+		    cd "`dirname "${SPATH}"`"
+		    SPATH="$(readlink "`basename "${SPATH}"`")"; 
+		  done
+		cd "`dirname "${SPATH}"`" > /dev/null
+		SPATH="`pwd`";
+		popd  > /dev/null
+	;; 
+	linux*)
+		SCRIPT=$( readlink -m $( type -p $0 ))
+		SPATH=`dirname ${SCRIPT}`
+	;;
+	*)
+		SCRIPT=$( readlink -m $( type -p $0 ))
+		SPATH=`dirname ${SCRIPT}`
+	;;
+esac
+IC9PATH="${SPATH}/ic9-*.jar"
+
+# process arguments to extract java system options
+ji=0 ai=0 jopts=() args=()
+for arg in "$@"
+do
+    if [ ${arg:0:2} = "-X" ] || [ ${arg:0:2} = "-D" ];
+    then
+    	jopts[$ji]=$arg
+	    ((++ji))
+	else
+		args[$ai]=$arg
+		((++ai))
+	fi
+done
+
+# while return code == 2, keep running, else stop
+ret=2
+while [ $ret -eq 2 ]
+do
+	# Run Ic9 passing any args.
+	java -jar "${jopts[@]}" ${IC9PATH} "${args[@]}"
+	ret=$?
+done

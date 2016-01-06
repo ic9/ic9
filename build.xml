@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+<project name="ic9" default="main" basedir=".">
+    <!-- Added -Dbuild.compiler=javac1.7 to ant build as workaround. Upgrading ant would be long term solution -->
+	<!-- Set variables. Accessed by ${} -->
+	<property name="version" value="0.5" />
+	<property name="java.source" value="1.7" />
+	<property name="java.target" value="1.7" />
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="build" />
+	<property name="dist.dir" location="dist" />
+	<property name="doc.dir" location="${dist.dir}/doc" />
+	<property name="java.doc.dir" location="${doc.dir}/java" />
+	<property name="js.doc.dir" location="${doc.dir}/js" />
+	<property name="lib.depends.dir" location="lib-depends" />
+	<property name="lib.cp.dir" location="${build.dir}/lib-depends" />
+	<property name="stdjslib.dir" location="stdjslib" />
+	<property name="jslib.dir" location="jslib" />
+	<property name="tests.dir" location="tests" />
+	<property name="examples.dir" location="examples" />
+	
+	<!-- Deletes the existing build, docs and dist directory-->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+	
+	<!-- Creates the  build, docs and dist directory-->
+	<target name="makedir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/lib" />
+		<mkdir dir="${build.dir}/lib-depends" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}/lib" />
+		<mkdir dir="${dist.dir}/lib-depends" />
+		<mkdir dir="${dist.dir}/stdjslib" />
+		<mkdir dir="${dist.dir}/jslib" />
+		<mkdir dir="${dist.dir}/tests" />
+		<mkdir dir="${dist.dir}/examples" />
+		<mkdir dir="${doc.dir}" />
+		<mkdir dir="${java.doc.dir}" />
+		<mkdir dir="${js.dic.dir}" />
+	</target>
+	
+	<target name="lib-depends">
+	    <echo message="BD: Copying libraries from '${lib.depends.dir}' to '${build.dir}/lib-depends'." />
+	    <copy todir="${build.dir}/lib-depends" verbose="yes" flatten="yes" failonerror="no">    
+			<fileset dir="${lib.depends.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Compiles the java code (including the usage of library for JUnit -->
+	<target name="compile" depends="clean, makedir, lib-depends">
+		<javac source="${java.source}" target="${java.target}" srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" debug="true" debuglevel="lines,vars,source">
+		    <classpath>
+                <fileset dir="${lib.cp.dir}">  
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+		</javac>
+	</target>
+	
+	
+	
+	<!--Creates the deployable jar file  -->
+	<target name="ic9-jar" depends="compile">
+	    
+	    <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/ic9-${version}.jar">
+			<classpath>
+			    <fileset dir="${dist.dir}" includes="*.jar"/>
+				<fileset dir="${dist.dir}/lib" includes="*.jar"/>
+				<fileset dir="${dist.dir}/lib-depends" includes="*.jar"/>
+			</classpath>
+		</manifestclasspath>
+	    
+		<jar destfile="${dist.dir}/ic9-${version}.jar">
+		    <fileset dir="${build.dir}">
+		        <include name="com/lehman/ic9/*.class" />
+		        <include name="com/lehman/ic9/common/*.class" />
+		        <include name="com/lehman/ic9/db/*.class" />
+		        <include name="com/lehman/ic9/io/*.class" />
+		        <include name="com/lehman/ic9/net/*.class" />
+		        <include name="com/lehman/ic9/sys/*.class" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="com.lehman.ic9.ic9Main" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="copy-lib-depends">
+	    <copy todir="${dist.dir}/lib-depends" verbose="yes" flatten="yes" failonerror="no">    
+			<fileset dir="${lib.depends.dir}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy-stdjslib">
+	    <copy todir="${dist.dir}/stdjslib" verbose="yes" flatten="no" failonerror="no">    
+			<fileset dir="${stdjslib.dir}">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy-jslib">
+	    <copy todir="${dist.dir}/jslib" verbose="yes" flatten="no" failonerror="no">    
+			<fileset dir="${jslib.dir}">
+				<include name="**/*.js" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy-tests">
+	    <copy todir="${dist.dir}/tests" verbose="yes" flatten="no" failonerror="no">    
+			<fileset dir="${tests.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="copy-examples">
+	    <copy todir="${dist.dir}/examples" verbose="yes" flatten="no" failonerror="no">    
+			<fileset dir="${examples.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="java-doc">
+		<javadoc packagenames="com.lehman.ic9.*" sourcepath="${src.dir}" destdir="${java.doc.dir}" version="true" windowtitle="Ic9">
+			<doctitle><![CDATA[= Ic9 =]]></doctitle>
+			<bottom><![CDATA[Copyright &copy; 2015 Austin Lehman. All Rights Reserved.]]></bottom> 
+			<group title="Ic9 Packages" packages="com.lehman.ic9.*"/>
+			
+			<classpath>
+				<fileset dir="${dist.dir}/lib-depends">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javadoc>
+	</target>
+	
+	<target name="js-doc">
+		<exec executable="jsdoc" failonerror="false" failifexecutionfails="false">
+			<arg value="-c"/>
+			<arg value="jsdoc_conf.json"/>
+			<!--
+			<arg value="-t" />
+			<arg value="./node_modules/ink-docstrap/template" />
+			-->
+		</exec>
+	</target>
+	
+	<target name="jar" depends="ic9-jar, copy-lib-depends, copy-stdjslib, copy-jslib, copy-tests, copy-examples, java-doc, js-doc">
+		<copy file="${basedir}/ic9" toFile="${dist.dir}/ic9" />
+		<copy file="${basedir}/ic9.bat" toFile="${dist.dir}/ic9.bat" />
+		<copy file="${basedir}/LICENSE" toFile="${dist.dir}/LICENSE" />
+		<copy file="${basedir}/NOTICE" toFile="${dist.dir}/NOTICE" />
+		<copy file="${basedir}/README.md" toFile="${dist.dir}/README.md" />
+		
+		<!-- Set file permissions. -->
+		<chmod file="${dist.dir}/ic9" perm="755"/>
+	</target>
+	
+	<target name="main" depends="compile, jar">
+		<description>Main target</description>
+	</target>
+
+</project> 

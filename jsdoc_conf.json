@@ -1,0 +1,40 @@
+{
+	"tags":
+	{
+		"allowUnknownTags": true,
+		"dictionaries": ["jsdoc", "closure"]
+	},
+	"source":
+	{
+		"include": ["stdjslib", "README.md"],
+		"exclude": [],
+		"includePattern": ".+\\.js(doc)?$",
+		"excludePattern": "(^|\\/|\\\\)_"
+	},
+	"templates":
+	{
+		"cleverLinks": false,
+		"monospaceLinks": false,
+		
+		"systemName"            : "Ic9",
+		"footer"                : "",
+		"copyright"             : "Copyright &copy; 2015 Austin Lehman. All Rights Reserved.",
+		"navType"               : "inline",
+		"theme"                 : "paper",
+		"linenums"              : true,
+		"collapseSymbols"       : false,
+		"inverseNav"            : false,
+		"outputSourceFiles"     : true,
+		"outputSourcePath"      : true,
+		"dateFormat"            : "dddd, MMMM Do YYYY, h:mm:ss a",
+		"highlightTutorialCode" : false,
+		"syntaxTheme"           : "default"
+	},
+	"opts":
+	{
+		"encoding": "utf8",
+		"destination": "dist/doc/js",
+		"recurse": true
+	},
+	"plugins": []
+}

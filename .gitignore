@@ -1,0 +1,27 @@
+# Directories #
+build/
+dist/
+${js.dic.dir}/
+
+# Built Files #
+*.class
+
+# Windows image file caches #
+Thumbs.db
+
+# Folder config file #
+Desktop.ini
+
+# OSX #
+.DS_Store
+.svn
+
+# Thumbnails #
+._*
+
+# External disks #
+.Spotlight-V100
+.Trashes
+
+# Eclipse #
+.settings/
