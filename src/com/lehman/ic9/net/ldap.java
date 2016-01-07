@@ -53,6 +53,32 @@ public class ldap
 	
 	private int searchTimeout = 30000;
 	
+	/**
+	 * Default constructor takes an instance of the ic9engine object and a variety of 
+	 * configuration information. If the user name contains a forward slash as used 
+	 * with Windows Active Directory (ex: jsmith/somecompany) then the root parameter is 
+	 * unused and the user name is used by iteslf. If not then the user name is a combination 
+	 * of the user name and the root (ex: cn=[UserName],[Root]).
+	 * <br><br>
+	 * So if the bind DN is: cn=read-only-admin,dc=example,dc=com you would pass the following.
+	 * <br>
+	 * UserName = 'read-only-admin'
+	 * <br>
+	 * Root = 'dc=example,dc=com'
+	 * <br><br>
+	 * For active directory with user jsmith at domain somecompany you would pass the following.
+	 * <br>
+	 * UserName = 'jsmith/somecompany'
+	 * <br>
+	 * Root = ''
+	 * <br>
+	 * @param Eng Is an instance of the ic9engine object.
+	 * @param Host Is a String with the LDAP/AD host to connect to.
+	 * @param Root Is a String with the root part of the DN or blank.
+	 * @param UserName Is a String with the user name.
+	 * @param Password Is a String with the password.
+	 * @param Port Is an int with the host port number to connect to.
+	 */
 	public ldap(ic9engine Eng, String Host, String Root, String UserName, String Password, int Port)
 	{
 		this.eng = Eng;
@@ -76,6 +102,11 @@ public class ldap
 		this.env.put(Context.SECURITY_CREDENTIALS, password);
 	}
 	
+	/**
+	 * Attempts to establish a connection to the LDAP server.
+	 * @param LdapAuth is a String with the type of authentication to use.
+	 * @throws ic9exception Exception
+	 */
 	public void connect(String LdapAuth) throws ic9exception
 	{
 		if(LdapAuth.equals("simple") || LdapAuth.equals("ssl") || LdapAuth.equals("sasl"))
@@ -94,6 +125,10 @@ public class ldap
 			throw new ic9exception("ldap.connect(): Unexpected LdapAuthType provided. Expecting 'simple', 'ssl' or 'sasl' but found '" + LdapAuth + "' instead.");
 	}
 	
+	/**
+	 * Disconnects from the LDAP server if connected.
+	 * @throws ic9exception Exception
+	 */
 	public void disconnect() throws ic9exception
 	{
 		if(this.connected)
@@ -113,11 +148,24 @@ public class ldap
 		}
 	}
 	
+	/**
+	 * Checks the connected flag to see if it's connected.
+	 * @return A boolean with true for connected and false for not.
+	 */
 	public boolean connected()
 	{
 		return this.connected;
 	}
 	
+	/**
+	 * Get a list of the names from the provided object string and if 
+	 * object string is blank then root is used.
+	 * @param ObjStr Is a String with the object to list.
+	 * @return A Javascript list with the results.
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 * @throws ic9exception Exception
+	 */
 	public Map<String, Object> list(String ObjStr) throws NoSuchMethodException, ScriptException, ic9exception
 	{
 		String objstr = "";
@@ -143,6 +191,14 @@ public class ldap
 		}
 	}
 	
+	/**
+	 * Gets all attributes for the provided object string.
+	 * @param ObjStr Is a String with the object to list.
+	 * @return A Javascript object with the results.
+	 * @throws ic9exception Exception
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 */
 	public Map<String, Object> getAttributes(String ObjStr) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		try
@@ -180,6 +236,16 @@ public class ldap
 		}
 	}
 	
+	/**
+	 * Gets the value of the attribute for the provided object 
+	 * and key.
+	 * @param ObjStr Is a String with the object to list.
+	 * @param AttrKey Is a String with the key to get the value for.
+	 * @return A Javascript list with the values for the provided key.
+	 * @throws ic9exception Exception
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 */
 	public Map<String, Object> getAttribute(String ObjStr, String AttrKey) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		try
@@ -216,6 +282,16 @@ public class ldap
 		}
 	}
 	
+	/**
+	 * Searches for the objects with the provided filter.
+	 * @param Base Is a String with the base context to search in.
+	 * @param Filter Is a String with the filter to apply.
+	 * @param FullObjs Is a boolean with true for full objects and false for not.
+	 * @return A Javascript object with the search results.
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 * @throws ic9exception Exception
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> search(String Base, String Filter, boolean FullObjs) throws NoSuchMethodException, ScriptException, ic9exception
 	{	
@@ -269,6 +345,13 @@ public class ldap
 		}
 	}
 
+	/**
+	 * Sets the key value pair on the provided object.
+	 * @param ObjStr Is a String with the object to set the pair.
+	 * @param AttrKey Is a String with the key to set for the pair.
+	 * @param AttrVal is a String with the value to set for the pair.
+	 * @throws ic9exception Exception
+	 */
 	public void setValue(String ObjStr, String AttrKey, String AttrVal) throws ic9exception
 	{	
 		try
