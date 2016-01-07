@@ -252,7 +252,6 @@ HttpServerRequest.prototype.initQueryParams = function () {
         } else {
             val = vals[0];
         }
-        console.log("key: " + key + " val: " + val);
         this.queryParams[key] = val;
     }
 };
