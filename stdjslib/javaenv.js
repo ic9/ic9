@@ -76,7 +76,7 @@ function newJsObject(ObjName) {
             throw ("newJsObject(): Instantiation of '" + ObjName + "' failed. " + e);
         }
     } else {
-        obj = Object.create(null);
+    	obj = new BaseObj();
     }
     return obj;
 }

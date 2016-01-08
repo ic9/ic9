@@ -203,7 +203,7 @@ public class ldap
 	{
 		try
 		{
-			Map<String, Object> mp = this.eng.newObj("");
+			Map<String, Object> mp = this.eng.newObj();
 			Attributes attrs = ctx.getAttributes(ObjStr);
 			
 			if(attrs != null)
@@ -214,7 +214,7 @@ public class ldap
 			          String key = attr.getID();
 	
 			          @SuppressWarnings("unchecked")
-					Map<String, Object> lst = (Map<String, Object>) this.eng.newList();
+			          Map<String, Object> lst = (Map<String, Object>) this.eng.newList();
 			          NamingEnumeration<?> ne = null;
 			          for (ne = attr.getAll(); ne.hasMore();)
 			          {
@@ -299,7 +299,7 @@ public class ldap
 		{
 			Map<String, Object> ret = null;
 			
-			if(FullObjs) ret = this.eng.newObj("");
+			if(FullObjs) ret = this.eng.newObj();
 			else ret = (Map<String, Object>) this.eng.newList();
 			
 			NamingEnumeration<SearchResult> namingEnum = ctx.search(Base, Filter, this.getSearchCtrls());
@@ -310,7 +310,7 @@ public class ldap
 				
 				if(FullObjs)
 				{
-					Map<String, Object> mp = this.eng.newObj("");
+					Map<String, Object> mp = this.eng.newObj();
 					Attributes attrs = res.getAttributes();
 					if(attrs != null)
 					{

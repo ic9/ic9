@@ -159,6 +159,19 @@ public class ic9engine
 	 * Instantiates a new Javascript object and returns it's ScriptObjectMirror 
 	 * object. This method invokes newJsObject from env.js. If null is provided 
 	 * as the name a generic Javascript object is created and returned.
+	 * @return A new ScriptObjectMirror as Map String - Object object.
+	 * @throws NoSuchMethodException Method not found.
+	 * @throws ScriptException Script exception.
+	 */
+	public Map<String,Object> newObj() throws NoSuchMethodException, ScriptException
+	{
+		return this.newObj(null);
+	}
+	
+	/**
+	 * Instantiates a new Javascript object and returns it's ScriptObjectMirror 
+	 * object. This method invokes newJsObject from env.js. If null is provided 
+	 * as the name a generic Javascript object is created and returned.
 	 * @param Name A String with the name of the object to create or null.
 	 * @return A new ScriptObjectMirror as Map String - Object object.
 	 * @throws NoSuchMethodException Method not found.
@@ -167,7 +180,7 @@ public class ic9engine
 	@SuppressWarnings("unchecked")
 	public Map<String,Object> newObj(String Name) throws NoSuchMethodException, ScriptException
 	{
-		if(Name == null || Name.trim().equals("")) return (Map<String,Object>) this.invokeFunction("newJsObject");
+		if(Name == null) return (Map<String,Object>) this.invokeFunction("newJsObject");
 		else return (Map<String,Object>) this.invokeFunction("newJsObject", Name);
 	}
 	

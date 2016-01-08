@@ -116,7 +116,7 @@ public class jdbc
 	 */
 	public Map<String, Object> getConInfo() throws NoSuchMethodException, ScriptException
 	{
-		Map<String, Object> jsobj = this.eng.newObj("");
+		Map<String, Object> jsobj = this.eng.newObj();
 		jsobj.put("driver", this.driver);
 		jsobj.put("url", this.url);
 		jsobj.put("userName", this.userName);
@@ -172,7 +172,7 @@ public class jdbc
 		try
 		{
 			if(this.con == null) throw new ic9exception("jdbc.getClientInfo(): Not Connected.");
-			Map<String, Object> jsobj = this.eng.newObj("");
+			Map<String, Object> jsobj = this.eng.newObj();
 			Properties props = this.con.getClientInfo();
 			if(props != null)
 			{
@@ -816,7 +816,7 @@ public class jdbc
 			Map<String, Object> tbl = (Map<String, Object>) this.eng.newList();
 	        while (rs.next())
 	        {
-	        	Map<String, Object> row = this.eng.newObj("");
+	        	Map<String, Object> row = this.eng.newObj();
 	        	for(int i = 1; i < ccount + 1; i++)
 	        	{
 		            String colName = rsmd.getColumnName(i);
@@ -873,7 +873,7 @@ public class jdbc
 			Map<String, Object> tbl = (Map<String, Object>) this.eng.newList();
 	        while (rs.next())
 	        {
-	        	Map<String, Object> row = this.eng.newObj("");
+	        	Map<String, Object> row = this.eng.newObj();
 	        	for(int i = 1; i < ccount + 1; i++)
 	        	{
 		            String colName = rsmd.getColumnName(i);
