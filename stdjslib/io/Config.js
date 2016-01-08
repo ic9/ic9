@@ -15,7 +15,7 @@
  */
 
 "use strict";
-/*global Java, isSet, BaseObj */
+/*global Java, isDef, BaseObj */
 
 /**
  * Config object used for managing configuration files.
@@ -50,8 +50,8 @@ Config.prototype.load = function (FileName) { this.native.load(FileName); return
  * @throws ic9exception if something goes wrong.
  */
 Config.prototype.get = function (PropertyName, DefaultValue) {
-    if (!isSet(PropertyName)) { throw ("config.get(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.get(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
     return this.native.get(PropertyName, DefaultValue);
 };
 
@@ -65,8 +65,8 @@ Config.prototype.get = function (PropertyName, DefaultValue) {
  * @throws ic9exception if something goes wrong.
  */
 Config.prototype.getString = function (PropertyName, DefaultValue) {
-    if (!isSet(PropertyName)) { throw ("config.getString(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.getString(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
     return this.native.getString(PropertyName, DefaultValue);
 };
 
@@ -80,8 +80,8 @@ Config.prototype.getString = function (PropertyName, DefaultValue) {
  * @throws ic9exception if something goes wrong.
  */
 Config.prototype.getBool = function (PropertyName, DefaultValue) {
-    if (!isSet(PropertyName)) { throw ("config.getBool(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.getBool(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
     return this.native.getBool(PropertyName, DefaultValue);
 };
 
@@ -95,8 +95,8 @@ Config.prototype.getBool = function (PropertyName, DefaultValue) {
  * @throws ic9exception if something goes wrong.
  */
 Config.prototype.getInt = function (PropertyName, DefaultValue) {
-    if (!isSet(PropertyName)) { throw ("config.getInt(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.getInt(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
     return this.native.getInt(PropertyName, DefaultValue);
 };
 
@@ -110,8 +110,8 @@ Config.prototype.getInt = function (PropertyName, DefaultValue) {
  * @throws ic9exception if something goes wrong.
  */
 Config.prototype.getDouble = function (PropertyName, DefaultValue) {
-    if (!isSet(PropertyName)) { throw ("config.getDouble(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.getDouble(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
     return this.native.getDouble(PropertyName, DefaultValue);
 };
 
@@ -126,8 +126,8 @@ Config.prototype.getDouble = function (PropertyName, DefaultValue) {
  */
 Config.prototype.getList = function (PropertyName, DefaultValue) {
     var tlist, ret = [], i;
-    if (!isSet(PropertyName)) { throw ("config.getList(): Property name must be set."); }
-    if (!isSet(DefaultValue)) { DefaultValue = null; }
+    if (!isDef(PropertyName)) { throw ("config.getList(): Property name must be set."); }
+    if (!isDef(DefaultValue)) { DefaultValue = null; }
 
     tlist = this.native.getList(PropertyName, DefaultValue);
     for (i = 0; i < tlist.size(); i += 1) {
