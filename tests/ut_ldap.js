@@ -15,7 +15,7 @@
  */
 
 "use strict";
-/*global include, TestSet, Ldap, assert */
+/*global include, TestSet, Ldap, assert, ldapAuthType */
 
 include("TestSet.js");
 include("net/Ldap.js");
@@ -33,7 +33,7 @@ function Ut_ldap() {
 
     // Connection object.
     this.con = undefined;
-    
+
     // Connection information.
     this.host = "ldap.forumsys.com";
     this.root = "dc=example,dc=com";
@@ -61,33 +61,33 @@ Ut_ldap.prototype.ldapInstantiate = function () {
 };
 
 Ut_ldap.prototype.ldapConnect = function () {
-	this.con.connect(ldapAuthType.simple);
-	assert(this.con.connected());
+    this.con.connect(ldapAuthType.simple);
+    assert(this.con.connected());
 };
 
 Ut_ldap.prototype.ldapDisconnect = function () {
-	this.con.disconnect();
-	assert(!this.con.connected());
+    this.con.disconnect();
+    assert(!this.con.connected());
 };
 
 Ut_ldap.prototype.ldapList = function () {
-	var lst = this.con.list("ou=scientists,dc=example,dc=com");
-	assert(lst.length === 1);
+    var lst = this.con.list("ou=scientists,dc=example,dc=com");
+    assert(lst.length === 1);
 };
 
 Ut_ldap.prototype.ldapGetAttributes = function () {
-	var ret = this.con.getAttributes("ou=scientists,dc=example,dc=com");
-	assert(ret.length() > 0);
+    var ret = this.con.getAttributes("ou=scientists,dc=example,dc=com");
+    assert(ret.length() > 0);
 };
 
 Ut_ldap.prototype.ldapGetAttribute = function () {
-	var lst = this.con.getAttribute("ou=scientists,dc=example,dc=com", "uniqueMember");
-	assert(lst.length > 0);
+    var lst = this.con.getAttribute("ou=scientists,dc=example,dc=com", "uniqueMember");
+    assert(lst.length > 0);
 };
 
 Ut_ldap.prototype.ldapSearch = function () {
-	var ret = this.con.search("dc=example,dc=com", "ou=mathematicians");
-	assert(ret.contains("ou=mathematicians,dc=example,dc=com"));
+    var ret = this.con.search("dc=example,dc=com", "ou=mathematicians");
+    assert(ret.contains("ou=mathematicians,dc=example,dc=com"));
 };
 
 Ut_ldap.prototype.constructor = Ut_ldap;
