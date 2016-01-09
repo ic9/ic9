@@ -23,10 +23,6 @@ include("net/Ssh.js");
 /**
  * File tests. Run this file with the ic9 -t to invoke 
  * the test() function.
- * 
- * Note: This test establishes a connection to a public internet 
- * LDAP server hosted by Forum Systems.
- * http://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
  */
 function Ut_ssh() {
     TestSet.call(this, "ut_ssh.js");
