@@ -58,32 +58,36 @@ public class environment
 	 */
 	public void include(String FileName) throws ic9exception
 	{
-		/*
-		 * Check to see if include exists within the stdlib path 
-		 * in the assembly path.
-		 */
-		String stdJsLib = sys.getAssemblyPath() + "stdjslib/" + FileName;
-		String jsLib = sys.getAssemblyPath() + "jslib/" + FileName;
-		String currentFile = sys.getCurrentPath() + sys.seperator() + FileName;
-		if(file.exists(stdJsLib))
-		{
-			this.eng.eval(FileName, file.read(stdJsLib));
-			this.includes.add(FileName);
-		}
-		else if(file.exists(jsLib))
-		{
-			this.eng.eval(FileName, file.read(jsLib));
-			this.includes.add(FileName);
-		}
-		else if(file.exists(currentFile))
-		{
-			this.eng.eval(FileName, file.read(currentFile));
-			this.includes.add(FileName);
-		}
-		else
-		{
-			throw new ic9exception("environment.include(): Couldn't find included file '" + FileName + "'.");
-		}
+	    // Check to see if it hasn't already been included.
+	    if(!this.includes.contains(FileName))
+	    {
+    		/*
+    		 * Check to see if include exists within the stdlib path 
+    		 * in the assembly path.
+    		 */
+    		String stdJsLib = sys.getAssemblyPath() + "stdjslib/" + FileName;
+    		String jsLib = sys.getAssemblyPath() + "jslib/" + FileName;
+    		String currentFile = sys.getCurrentPath() + sys.seperator() + FileName;
+    		if(file.exists(stdJsLib))
+    		{
+    			this.eng.eval(FileName, file.read(stdJsLib));
+    			this.includes.add(FileName);
+    		}
+    		else if(file.exists(jsLib))
+    		{
+    			this.eng.eval(FileName, file.read(jsLib));
+    			this.includes.add(FileName);
+    		}
+    		else if(file.exists(currentFile))
+    		{
+    			this.eng.eval(FileName, file.read(currentFile));
+    			this.includes.add(FileName);
+    		}
+    		else
+    		{
+    			throw new ic9exception("environment.include(): Couldn't find included file '" + FileName + "'.");
+    		}
+	    }
 	}
 	
 	/**
