@@ -45,7 +45,7 @@ License: Apache2 (See LICENSE.txt)
 * Database support. (Generic JDBC and Sqlite) (done)
 * LDAP/AD support. (done)
 * JSON/SOAP web services. (in progress)
-* SSH/Telnet support. (not started yet)
+* SSH/Telnet support. (in progress)
 * SFTP/FTP support. (not started yet)
 * Socket support. (not started yet)
 
