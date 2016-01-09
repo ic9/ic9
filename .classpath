@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib-depends/jetty/jetty-servlet-9.3.5.v20151012.jar"/>
 	<classpathentry kind="lib" path="lib-depends/jetty/jetty-security-9.3.5.v20151012.jar"/>
 	<classpathentry kind="lib" path="lib-depends/jsch/jsch-0.1.51.jar"/>
+	<classpathentry kind="lib" path="lib-depends/apache.net/commons-net-3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
