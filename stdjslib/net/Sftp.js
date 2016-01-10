@@ -347,44 +347,4 @@ Sftp.prototype.getStrictHostKeyChecking = function () {
     return this.native.getStrictHostKeyChecking();
 };
 
-/**
- * Sets the connect timeout in milliseconds. (Default is 3000) This must 
- * be set prior to calling connect or it has no effect.
- * @param TimeoutMills Is an int with the connect timeout in milliseconds.
- * @return Object instance.
- */
-Sftp.prototype.setConnectTimeiout = function (TimeoutMills) {
-    this.native.setConnectTimeout(TimeoutMills);
-    return this;
-};
-
-/**
- * Gets the connect timeout in milliseconds.
- * @return An int with the connect timeout in milliseconds.
- */
-Sftp.prototype.getConnectTimeout = function () {
-    return this.native.getConnectTimeout();
-};
-
-/**
- * Sets the strict host key checking flag. True is for yes and 
- * false is for no. (Default is no.) This must be set prior to calling 
- * connect or it has no effect.
- * @param StrictHostKeyChecking Is a boolean with true for strict checking and false for not.
- * @return Object instance.
- */
-Sftp.prototype.setStrictHostKeyChecking = function (StrictHostKeyChecking) {
-    this.native.setStrictHostKeyChecking(StrictHostKeyChecking);
-    return this;
-};
-
-/**
- * Gets the strict host key checking flag. True is for yes and 
- * false is for no. (Default is no.)
- * @return A boolean with true for yes and false for no.
- */
-Sftp.prototype.getStrictHostKeyChecking = function () {
-    return this.native.getStrictHostKeyChecking();
-};
-
 Sftp.prototype.constructor = Sftp;
