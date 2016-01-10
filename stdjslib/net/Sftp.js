@@ -15,7 +15,7 @@
  */
 
 "use strict";
-/*global Java, BaseObj, setDef */
+/*global Java, BaseObj, setDef, getEngine */
 
 /**
  * DirRec is the object that is provided in the results of 
@@ -57,7 +57,7 @@ function Sftp(Host, UserName, Password, Port) {
     Port = setDef(Port, 22);
 
     var NativeSftp = Java.type("com.lehman.ic9.net.sftp");
-    this.native = new NativeSftp(Host, UserName, Password, Port);
+    this.native = new NativeSftp(getEngine(), Host, UserName, Password, Port);
 }
 Sftp.prototype = new BaseObj();
 
@@ -275,10 +275,11 @@ Sftp.prototype.lpwd = function () {
  * This method returns a JS object with key-value pairs where the 
  * key Is the file name and the value is a DirRec object with item 
  * details.
- * @param Path Is a String with the path to list contents of.
+ * @param Path Is a String with the path to list contents of. (Optional)
  * @return A JS object with key-value pairs.
  */
 Sftp.prototype.ls = function (Path) {
+    Path = setDef(Path, null);
     return this.native.ls(Path);
 };
 

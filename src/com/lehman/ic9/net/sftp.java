@@ -501,8 +501,9 @@ public class sftp
                 ao.put("name", entry.getFilename());
                 ao.put("longName", entry.getLongname());
                 
-                Map<String, Object> attrobj = this.eng.newObj();
                 SftpATTRS attrs = entry.getAttrs();
+                
+                Map<String, Object> attrobj = this.eng.newObj();
                 attrobj.put("aTime", this.eng.newDate(((long)attrs.getATime()) * 1000));
                 attrobj.put("mTime", this.eng.newDate(((long)attrs.getMTime()) * 1000));
                 attrobj.put("aTimeStr", attrs.getAtimeString());
@@ -510,9 +511,13 @@ public class sftp
                 
                 @SuppressWarnings("unchecked")
                 Map<String, Object> extended = (Map<String, Object>) this.eng.newList();
-                for(String ext : attrs.getExtended())
+                String[] extlist = attrs.getExtended();
+                if (extlist != null)
                 {
-                    this.eng.invokeMethod(extended, "push", ext);
+                    for(String ext : extlist)
+                    {
+                        this.eng.invokeMethod(extended, "push", ext);
+                    }
                 }
                 attrobj.put("extended", extended);
                 
