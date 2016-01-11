@@ -15,7 +15,7 @@
  */
 
 "use strict";
-/*global include, TestRunner, Ut_ic9engine, Ut_hex, Ut_base64, Ut_uuid, Ut_thread, Ut_timer, Ut_html, Ut_jdbc, Ut_sqlite */
+/*global include, TestRunner, Ut_ic9engine, Ut_hex, Ut_base64, Ut_uuid, Ut_thread, Ut_timer, Ut_html, Ut_xml, Ut_jdbc, Ut_sqlite */
 
 include("TestRunner.js");
 
@@ -27,6 +27,7 @@ include("ut_uuid.js");
 include("ut_thread.js");
 include("ut_timer.js");
 include("ut_html.js");
+include("ut_xml.js");
 include("ut_jdbc.js");
 include("ut_sqlite.js");
 
@@ -42,6 +43,7 @@ function Ut_all() {
         .add(Ut_thread)
         .add(Ut_timer)
         .add(Ut_html)
+        .add(Ut_xml)
         .add(Ut_jdbc)
         .add(Ut_sqlite);
 }
