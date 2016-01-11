@@ -15,7 +15,7 @@
  */
 
 "use strict";
-/*global Java, xml */
+/*global Java, xml, getEngine */
 
 /**
  * Object for managing XML data.
@@ -29,15 +29,25 @@ var xml = {
     native : Java.type("com.lehman.ic9.common.xml"),
 
     /**
-     * Parses the provided XML string and returns a JS object with 
-     * the XML structure. Child elements are stored in the 'children' 
-     * member as an Array and XML attributes are stored in the 'attr' 
-     * member as an object.
-     * @param Ic9Engine is an instance of the ic9engine java object.
+     * Parses the provided XML string and returns a JS object tree representing 
+     * the XML document.
+     * <br><br>
+     * JS Object Structure:
+     * <br>
+     * attr: Is a JS object with any of the XML attributes.
+     * <br>
+     * children: Is a JS array with any child nodes.
+     * <br>
+     * name: Is the node name. (This may be #comment or #cdata-section, otherwise it 
+     * is the element name.)
+     * <br>
+     * value: Is initialized to null and is later set to a string if it has a text value.
+     * <br>
+     * 
      * @param XmlString is a string with the XML content to parse.
      * @return A Javascript object with the parsed XML content.
      */
-    parse : function (Ic9Engine, XmlString) {
-        return xml.native.parse(Ic9Engine, XmlString);
+    parse : function (XmlString) {
+        return xml.native.parse(getEngine(), XmlString);
     },
 };

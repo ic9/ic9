@@ -48,11 +48,28 @@ import org.xml.sax.SAXException;
 import com.lehman.ic9.ic9engine;
 import com.lehman.ic9.ic9exception;
 
+/**
+ * Implements basic XML parse and create functionality.
+ * @author Austin Lehman
+ */
 public class xml
 {
 	/**
 	 * Parses the provided XML string and returns a JS object tree representing 
 	 * the XML document.
+	 * <br><br>
+	 * JS Object Structure:
+	 * <br>
+     * attr: Is a JS object with any of the XML attributes.
+     * <br>
+     * children: Is a JS array with any child nodes.
+     * <br>
+     * name: Is the node name. (This may be #comment or #cdata-section, otherwise it 
+     * is the element name.)
+     * <br>
+     * value: Is initialized to null and is later set to a string if it has a text value.
+     * <br>
+     * 
 	 * @param eng is an instance of the ic9engine.
 	 * @param XmlString is a String with XML to parse.
 	 * @return A Javascript object tree with the parsed XML.
@@ -75,13 +92,11 @@ public class xml
 		
 		Element er = doc.getDocumentElement();
 		
-		Map<String, Object> ret = eng.newObj(null);
-		ret.put("attr", eng.newObj(null));
-		ret.put("children", eng.newObj(null));
-		ret.put("value", null);
+		Map<String, Object> rootObj = newNode(eng);
+		rootObj.put("name", er.getNodeName());
 		
-		xml.getCaliElementsFromJavaElement(eng, er, ret);
-		return ret;
+		xml.getIc9ElementsFromJavaElement(eng, er, rootObj);
+		return rootObj;
 	}
 	
 	/**
@@ -95,43 +110,49 @@ public class xml
 	 * @throws ScriptException Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public static void getCaliElementsFromJavaElement(ic9engine eng, Node jel, Map<String, Object> jobj) throws ic9exception, NoSuchMethodException, ScriptException
+	public static void getIc9ElementsFromJavaElement(ic9engine eng, Node jel, Map<String, Object> jobj) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		switch(jel.getNodeType())
 		{
 		case ELEMENT_NODE:
 			getAttributesFromJavaAttributes(jel, jobj);
 			
-			Map<String, Object> nobj = eng.newObj(null);
-			nobj.put("attr", eng.newObj(null));
-			nobj.put("children", eng.newObj(null));
-			nobj.put("value", null);
-			((Map<String, Object>)jobj.get("children")).put(jel.getNodeName(), nobj);
-			
-			if((jel.getChildNodes().getLength() == 1)&&(jel.getChildNodes().item(0).getNodeType() == TEXT_NODE))
+			for(int i = 0; i < jel.getChildNodes().getLength(); i++)
 			{
-				nobj.put("value", jel.getChildNodes().item(0).getNodeValue());
-			}
-			else
-			{
-				for(int i = 0; i < jel.getChildNodes().getLength(); i++)
+				Node tel = (Node)jel.getChildNodes().item(i);
+				
+				if(!tel.getNodeName().startsWith("#text"))
 				{
-					Node tel = (Node)jel.getChildNodes().item(i);
-					xml.getCaliElementsFromJavaElement(eng, tel, nobj);
+    				Map<String, Object> nobj = newNode(eng);
+    				nobj.put("name", tel.getNodeName());
+    				xml.getIc9ElementsFromJavaElement(eng, tel, nobj);
+    				eng.invokeMethod(jobj.get("children"), "push", nobj);
 				}
 			}
 			break;
 		case TEXT_NODE:	// Should never happen because it's handled in element.
-			((Map<String, Object>)jobj.get("children")).put(jel.getNodeName(), jel.getNodeValue());
+		    if(!jel.getNodeValue().trim().equals(""))
+		    {
+    		    if(jobj.get("value") == null) { jobj.put("value", ""); }
+    		    jobj.put("value", jobj.get("value") + jel.getNodeValue());
+		    }
 			break;
 		case ATTRIBUTE_NODE: // Don't think this will happen either. Should be in element.
 			((Map<String, Object>)jobj.get("attr")).put(jel.getNodeName(), jel.getNodeValue());
 			break;
 		case COMMENT_NODE:
-			((Map<String, Object>)jobj.get("children")).put(jel.getNodeName(), jel.getNodeValue());
+		    if(!jel.getNodeValue().trim().equals(""))
+            {
+                if(jobj.get("value") == null) { jobj.put("value", ""); }
+                jobj.put("value", jobj.get("value") + jel.getNodeValue());
+            }
 			break;
 		case CDATA_SECTION_NODE:
-			((Map<String, Object>)jobj.get("children")).put(jel.getNodeName(), jel.getNodeValue());
+		    if(!jel.getNodeValue().trim().equals(""))
+            {
+                if(jobj.get("value") == null) { jobj.put("value", ""); }
+                jobj.put("value", jobj.get("value") + jel.getNodeValue());
+            }
 			break;
 		case DOCUMENT_TYPE_NODE:
 			((Map<String, Object>)jobj.get("children")).put("doctype", jel.getNodeName());
@@ -173,5 +194,32 @@ public class xml
 			Node tmp = nnp.item(i);
 			((Map<String, Object>)jobj.get("attr")).put(tmp.getNodeName(), tmp.getNodeValue());
 		}
+	}
+	
+	/**
+	 * Creates a new JS object that represents a XML node. The new object will contain the 
+	 * following items.
+	 * <br>
+	 * attr: Is an empty JS object.
+	 * <br>
+	 * children: Is an empty JS array.
+	 * <br>
+	 * name: Is the node name.
+	 * <br>
+	 * value: Is initialized to null and is later set to a string if it has a value.
+	 * 
+	 * @param eng
+	 * @return A new JS node object.
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 */
+	private static Map<String, Object> newNode(ic9engine eng) throws NoSuchMethodException, ScriptException
+	{
+	    Map<String, Object> nobj = eng.newObj();
+	    nobj.put("attr", eng.newObj());
+	    nobj.put("children", eng.newList());
+	    nobj.put("value", null);
+	    nobj.put("name", "");
+	    return nobj;
 	}
 }
