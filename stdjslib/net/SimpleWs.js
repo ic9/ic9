@@ -17,6 +17,8 @@
 "use strict";
 /*global isDef, BaseObj */
 
+include("common/xml.js");
+
 /**
  * Simple data types.
  * @namespace
@@ -112,84 +114,135 @@ WsInterface.prototype.addCall = function (Name, ReqObj, ResObj) {
  * @return A string with the WSDL content.
  */
 WsInterface.prototype.toWsdl = function () {
-    var i, call, wsdl = "";
+    var i, call, wsdl, wsdlChildren = [], ports = [], item;
 
-    wsdl += "<?xml version=\"1.0\"?>\n";
-    wsdl += "<wsdl:definitions name=\"" + this.name + "\" ";
-    wsdl += "targetNamespace=\"" + this.host + "\" ";
-    wsdl += "xmlns:tns=\"" + this.host + "\" ";
-    wsdl += "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" ";
-    wsdl += "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" ";
-    wsdl += "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\">\n";
-
-    // Types
-    wsdl += "<wsdl:types>\n";
-    wsdl += "<xsd:schema targetNamespace=\"" + this.host + "\">\n";
-    wsdl += this.toWsdlTypes();
-    wsdl += "</xsd:schema>\n";
-    wsdl += "</wsdl:types>\n";
+    item = {
+        name: "wsdl:types",
+        children: [
+            {
+                name: "xsd:schema",
+                attr: { targetNamespace: this.host },
+                children: this.getWsdlTypes()
+            }
+        ]
+    };
+    wsdlChildren.push(item);
 
     for (i = 0; i < this.calls.length; i += 1) {
         call = this.calls[i];
         // Request
-        wsdl += "<wsdl:message name=\"" + call.name + "Input\">\n";
-        wsdl += "<wsdl:part name=\"" + call.reqObj.name + "\" element=\"tns:" + call.reqObj.name + "\"/>\n";
-        wsdl += "</wsdl:message>\n";
+        item = {
+            name: "wsdl:message",
+            attr: { name: call.name + "Input" },
+            children: [
+                { name: "wsdl:part", attr: { name: call.reqObj.name, element: "tns:" + call.reqObj.name } }
+            ]
+        };
+        wsdlChildren.push(item);
+
         // Response
-        wsdl += "<wsdl:message name=\"" + call.name + "Output\">\n";
-        wsdl += "<wsdl:part name=\"" + call.resObj.name + "\" element=\"tns:" + call.resObj.name + "\"/>\n";
-        wsdl += "</wsdl:message>\n";
+        item = {
+            name: "wsdl:message",
+            attr: { name: call.name + "Output" },
+            children: [
+                { name: "wsdl:part", attr: { name: call.resObj.name, element: "tns:" + call.resObj.name } }
+            ]
+        };
+        wsdlChildren.push(item);
 
         // Port
-        wsdl += "<wsdl:portType name=\"" + call.name + "PortType\">\n";
-        wsdl += "<wsdl:operation name=\"" + call.name + "\">\n";
-        wsdl += "<wsdl:input message=\"tns:" + call.name + "Input\"/>\n";
-        wsdl += "<wsdl:output message=\"tns:" + call.name + "Output\"/>\n";
-        wsdl += "</wsdl:operation>\n";
-        wsdl += "</wsdl:portType>\n";
+        item = {
+            name: "wsdl:portType",
+            attr: { name: call.name + "PortType" },
+            children: [
+                {
+                    name: "wsdl:operation",
+                    attr: { name: call.name },
+                    children: [
+                        { name: "wsdl:input", attr: { message: "tns:" + call.name + "Input" } },
+                        { name: "wsdl:output", attr: { message: "tns:" + call.name + "Output" } }
+                    ]
+                }
+            ]
+        };
+        wsdlChildren.push(item);
 
         // Binding
-        wsdl += "<wsdl:binding name=\"" + call.name + "Binding\" type=\"tns:" + call.name + "PortType\">\n";
-        wsdl += "<soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>\n";
-        wsdl += "<wsdl:operation name=\"" + call.name + "\">\n";
-        wsdl += "<soap:operation soapAction=\"" + this.host + "\"/>\n";
-        wsdl += "<wsdl:input><soap:body use=\"literal\"/></wsdl:input>\n";
-        wsdl += "<wsdl:output><soap:body use=\"literal\"/></wsdl:output>\n";
-        wsdl += "</wsdl:operation>\n";
-        wsdl += "</wsdl:binding>\n";
+        item = {
+            name: "wsdl:binding",
+            attr: { name: call.name + "Binding", type: "tns:" + call.name + "PortType" },
+            children: [
+                { name: "soap:binding", attr: { style: "document", transport: "http://schemas.xmlsoap.org/soap/http" } },
+                {
+                    name: "wsdl:operation",
+                    attr: { name: call.name },
+                    children: [
+                        { name: "soap:operation", attr: { soapAction: call.name } },
+                        {
+                            name: "wsdl:input",
+                            children: [ { name: "soap:body", attr: { use: "literal" } } ]
+                        },
+                        {
+                            name: "wsdl:output",
+                            children: [ { name: "soap:body", attr: { use: "literal" } } ]
+                        }
+                    ]
+                }
+            ]
+        };
+        wsdlChildren.push(item);
+        
+        item = {
+            name: "wsdl:port",
+            attr: { name: call.name + "Port", binding: "tns:" + call.name + "Binding" },
+            children: [
+                { name: "soap:address", attr: { location: this.host } }
+            ]
+        };
+        ports.push(item);
     }
 
-    wsdl += "<wsdl:service name=\"" + this.name + "\">\n";
-    wsdl += "<wsdl:documentation>" + this.description + "</wsdl:documentation>\n";
+    ports.push({ name: "wsdl:documentation", value: this.description });
+    item = {
+        name: "wsdl:service",
+        attr: { name: this.name },
+        children: ports
+    };
+    wsdlChildren.push(item);
 
-    for (i = 0; i < this.calls.length; i += 1) {
-        call = this.calls[i];
-        wsdl += "<wsdl:port name=\"" + call.name + "Port\" binding=\"tns:" + call.name + "Binding\">\n";
-        wsdl += "<soap:address location=\"" + this.host + "\"/>\n";
-        wsdl += "</wsdl:port>\n";
-    }
+    // Build the entire WSDL.
+    wsdl = {
+        name: "wsdl:definitions",
+        attr: {
+            name: this.name,
+            targetNamespace: this.host,
+            "xmlns:tns": this.host,
+            "xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+            "xmlns:soap": "http://schemas.xmlsoap.org/wsdl/soap/",
+            "xmlns:wsdl": "http://schemas.xmlsoap.org/wsdl/"
+        },
+        children: wsdlChildren
+    };
 
-    wsdl += "</wsdl:service>\n";
-    wsdl += "</wsdl:definitions>\n";
-
-    return wsdl;
+    // Convert to XML and return.
+    return xml.prolog() + xml.toXml(wsdl);
 };
 
 /**
  * Generates the WSDL types section and returns 
  * it as a string.
  */
-WsInterface.prototype.toWsdlTypes = function () {
-    var i, call, wsdl = "";
+WsInterface.prototype.getWsdlTypes = function () {
+    var i, call, wsdl = [];
 
     for (i = 0; i < this.calls.length; i += 1) {
         call = this.calls[i];
 
         // Request object.
-        wsdl += this.toWsdlSchemaNode(call.reqObj);
+        wsdl.push(this.toWsdlSchemaNode(call.reqObj));
 
         // Response object.
-        wsdl += this.toWsdlSchemaNode(call.resObj);
+        wsdl.push(this.toWsdlSchemaNode(call.resObj));
     }
 
     return wsdl;
@@ -201,28 +254,51 @@ WsInterface.prototype.toWsdlTypes = function () {
  * @return A string with the WSDL.
  */
 WsInterface.prototype.toWsdlSchemaNode = function (SchemaNode) {
-    var i, el, wsdl = "";
+    var i, el, wsdl = null, childNodes = [], child = null;
 
     if (SchemaNode.type === dataType.object) {
-        wsdl += "<xsd:element name=\"" + SchemaNode.name + "\">\n";
-        wsdl += "<xsd:complexType>\n";
-        wsdl += "<xsd:sequence>\n";
+
+        // Get list of child nodes.
         for (i = 0; i < SchemaNode.children.length; i += 1) {
-            wsdl += this.toWsdlSchemaNode(SchemaNode.children[i]);
+            child = this.toWsdlSchemaNode(SchemaNode.children[i]);
+            if (child !== null) {
+                childNodes.push(child);
+            }
         }
-        wsdl += "</xsd:sequence>\n";
-        wsdl += "</xsd:complexType>\n";
-        wsdl += "</xsd:element>\n";
+
+        wsdl = {
+            name: "xsd:element",
+            attr: { name: SchemaNode.name },
+            children: [
+                {
+                    name: "xsd:complexType",
+                    children: [
+                        {
+                            name: "xsd:sequence",
+                            attr: {},
+                            children: childNodes
+                        }
+                    ]
+                }
+            ]
+        };
+        if (SchemaNode.minOccurs >= 0) { wsdl.children[0].children[0].attr.minOccurs = SchemaNode.minOccurs; }
+        if (SchemaNode.maxOccurs === "unbounded" || SchemaNode.maxOccurs >= 0) { wsdl.children[0].children[0].attr.maxOccurs = SchemaNode.maxOccurs; }
+        
     } else {
-        el = "<xsd:element name=\"" + SchemaNode.name + "\" type=\"xsd:" + SchemaNode.type + "\"";
-        if (SchemaNode.minOccurs >= 0) { el += " minOccur=\"" + SchemaNode.minOccurs + "\""; }
-        if (SchemaNode.maxOccurs >= 0) { el += " maxOccur=\"" + SchemaNode.maxOccurs + "\""; }
-        el += "/>\n";
-        wsdl += el;
+        wsdl = {
+            name: "xsd:element",
+            attr:
+            {
+                name: SchemaNode.name,
+                type: "xsd:" + SchemaNode.type
+            }
+        };
+        if (SchemaNode.minOccurs >= 0) { wsdl.attr.minOccurs = SchemaNode.minOccurs; }
+        if (SchemaNode.maxOccurs === "unbounded" || SchemaNode.maxOccurs >= 0) { wsdl.addr.maxOccurs = SchemaNode.maxOccurs; }
     }
 
     return wsdl;
 };
 
 WsInterface.prototype.constructor = WsInterface;
-

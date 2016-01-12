@@ -34,15 +34,27 @@ function handle(req, res)
 		.add(new WsSchemaNode("error", dataType.string))
 	;
 	
+	var people = new WsSchemaNode("people", dataType.object);
+	people.minOccurs = 1;
+	people.maxOccurs = "unbounded";
+	people.add(person);
+	
 	var wsInt = new WsInterface("http://localhost:8080/wsdltest", "person");
 	wsInt.addCall("addPerson", person, callResp);
+	wsInt.addCall("addPeople", people, callResp);
 	
 	if(req.method == httpMethod.post)
 	{
+	    if (req.headers.hasOwnProperty("SOAPAction")) {
+	        console.info("SOAPAction: " + req.headers.SOAPAction);
+	    } else {
+	        console.info("SOAPAction: Error, not set by client!");
+	    }
+	    
 		// Handle POST request.
 		var content = req.getContent();
-		console.info("Post Content:\n" + xml.parse(getEngine(), content).toString(true));
-		res.println("Request accepted.");
+		console.info("Post Content:\n" + xml.parse(content).toString(true));
+		res.println(content);
 	}
 	else
 	{
