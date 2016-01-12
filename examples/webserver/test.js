@@ -22,8 +22,8 @@ include("WsImpl.js");
 println('********************************************');
 println("* Starting test HTTP server ...");
 println('********************************************');
-println("If you haven't already, you need to generate a keystore for SSL. See comments in test.js for details.");
-println("\nPoint your browser to https://localhost:8080/. The basic auth credentials are whatever you want them to be.")
+//println("If you haven't already, you need to generate a keystore for SSL. See comments in test.js for details.");
+println("\nPoint your browser to http://localhost:8080/. The basic auth credentials are whatever you want them to be.")
 
 /**
  * TestServer constructor, sets up SSL information and allows 
@@ -36,7 +36,7 @@ function TestServer(Host, Port) {
     HttpServer.call(this, Host, Port);
 	
 	// Init server.
-	this.setSsl("testkeystore.jks", "password");               // Setup SSL.
+	//this.setSsl("testkeystore.jks", "password");               // Setup SSL.
 	this.setWs();                                              // Accept Websockets.
 	
 	this.globals = {};
