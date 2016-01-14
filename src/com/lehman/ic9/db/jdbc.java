@@ -1080,6 +1080,8 @@ public class jdbc
 				stmt.setBoolean(index, (Boolean)field);
 			else if(field instanceof Integer)
 				stmt.setLong(index, (Integer)field);
+			else if(field instanceof Long)
+			    stmt.setLong(index, (Long)field);
 			else if(field instanceof Double)
 				stmt.setDouble(index, (Double)field);
 			else if(field instanceof String)
