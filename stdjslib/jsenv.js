@@ -250,10 +250,13 @@ Function.prototype.p = function (MemberName, FunctionInstance) {
  * @param Needle is the item to check for.
  * @return A boolean with true for contains and false for not.
  */
-Object.prototype.contains = function (Needle) {
-    if (Array.isArray(this)) { return (this.indexOf(Needle) > -1); }
-    return this.hasOwnProperty(Needle);
-};
+Object.defineProperty(Object.prototype, 'contains', {
+    value : function (Needle) {
+        if (Array.isArray(this)) { return (this.indexOf(Needle) > -1); }
+        return this.hasOwnProperty(Needle);
+    },
+    enumerable: false
+});
 
 /**
  * Mixin method takes the source object and 
@@ -261,15 +264,18 @@ Object.prototype.contains = function (Needle) {
  * @param Source is the source object to mix in.
  * @return Object instance.
  */
-Object.prototype.mixin = function (Source) {
-    var prop;
-    for (prop in Source) {
-        if (Source.hasOwnProperty(prop)) {
-            this[prop] = Source[prop];
+Object.defineProperty(Object.prototype, 'mixin', {
+    value : function (Source) {
+        var prop;
+        for (prop in Source) {
+            if (Source.hasOwnProperty(prop)) {
+                this[prop] = Source[prop];
+            }
         }
-    }
-    return this;
-};
+        return this;
+    },
+    enumerable: false
+});
 
 /*jslint forin:true */
 /**
@@ -278,43 +284,58 @@ Object.prototype.mixin = function (Source) {
  * @param ShowMeths is a boolean with true for show methods and false for not.
  * @return A string of the object in JSON format.
  */
-Object.prototype.toString = function (Pretty, ShowMeths) {
-    var ret = "", mth;
-    if (Pretty) {
-        ret = JSON.stringify(this, undefined, 3);
-    } else {
-        ret = JSON.stringify(this);
-    }
-    if (ShowMeths) {
-        ret += "\n";
-        for (mth in this) {
-            if (isFunct(this[mth])) {
-                ret += "Method: " + mth + "\n";
+Object.defineProperty(Object.prototype, 'toString', {
+    value : function (Pretty, ShowMeths) {
+        var ret = "", mth;
+        if (Pretty) {
+            ret = JSON.stringify(this, undefined, 3);
+        } else {
+            ret = JSON.stringify(this);
+        }
+        if (ShowMeths) {
+            ret += "\n";
+            for (mth in this) {
+                if (isFunct(this[mth])) {
+                    ret += "Method: " + mth + "\n";
+                }
             }
         }
-    }
-    return ret;
-};
+        return ret;
+    },
+    enumerable: false
+});
 /*jslint forin:false */
 
-Object.prototype.length = function () {
-    var cnt = 0, key;
-    for (key in this) {
-        if (this.hasOwnProperty(key)) {
-            cnt += 1;
+/**
+ * Gets the number of properties in the object. This 
+ * method uses hasOwnProperty to filter for just 
+ * the properties.
+ * @return An int with the number of properties.
+ */
+Object.defineProperty(Object.prototype, 'length', {
+    value : function () {
+        var cnt = 0, key;
+        for (key in this) {
+            if (this.hasOwnProperty(key)) {
+                cnt += 1;
+            }
         }
-    }
-    return cnt;
-};
+        return cnt;
+    },
+    enumerable: false
+});
 
 /**
  * Add contains member to Strig prototype.
  * @param Str is a String to test for.
  * @return A boolean with true for contains and false for not.
  */
-String.prototype.contains = function (Str) {
-    return this.indexOf(Str) !== -1;
-};
+Object.defineProperty(String.prototype, 'contains', {
+    value : function (Str) {
+        return this.indexOf(Str) !== -1;
+    },
+    enumerable: false
+});
 
 /**
  * Gets the item at the specified index. This 
