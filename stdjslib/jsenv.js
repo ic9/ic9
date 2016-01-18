@@ -17,7 +17,7 @@
 "use strict";
 /*global Java, isDef, setDef */
 
-var $global, $ic9env;
+var $global, $ic9env, $ic9;
 
 /** Set $global function. */
 $global = function () {
@@ -26,6 +26,9 @@ $global = function () {
 
 /** Set the global $ic9env flag. */
 $ic9env = true;
+
+/** Set the global $ic9 object. */
+$ic9 = {};
 
 /**
  * Sets a default value where none is set already. This 
