@@ -584,6 +584,16 @@ public class httpClient
 		ctx.setCredentialsProvider(this.cp);
 		ctx.setRequestConfig(this.rcb.build());
 		
+		// Set headers.
+        @SuppressWarnings("unchecked")
+        Map<String, Object> headers = (Map<String, Object>) this.jsobj.get("headers");
+        for(String key : headers.keySet())
+        {
+            String val = (String) headers.get(key);
+            if(!post) { httpGet.addHeader(key, val); }
+            else { httpPost.addHeader(key, val); }
+        }
+		
 		CloseableHttpResponse resp = null;
 		try
 		{	

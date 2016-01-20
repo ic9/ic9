@@ -47,6 +47,9 @@ function HttpClient(UrlString) {
 
     // Container for cookies.
     this.cookies = [];
+    
+    // Container for headers.
+    this.headers = {};
 
     // The native Java object.
     this.native = null;
@@ -246,6 +249,19 @@ HttpClient.prototype.getRelativeRedirectsAllowed = function () {
 /*
  * SETTERS
  */
+
+/**
+ * Sets a header key value pair. This is a shortcut to simply 
+ * setting a key/value pair on the obj.headers object.
+ * @param Key is a string with the header key to set.
+ * @param Value is a string with the header value to set.
+ * @return Object instance.
+ */
+HttpClient.prototype.set = function (Key, Value) {
+    this.headers[Key] = Value;
+    return this;
+};
+
 /**
  * Sets the credentials to use for basic authentication.
  * @param UserName is a String with the user name.
