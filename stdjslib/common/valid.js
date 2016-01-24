@@ -17,6 +17,8 @@
 "use strict";
 /*global $ic9, setDef */
 
+/*jslint regexp: true */
+
 /**
  * Valid is a simple collection of common validation 
  * functions. These are for the main use cases.
@@ -173,5 +175,44 @@ $ic9.valid = {
 
         regx = new RegExp(rstr);
         return $ic9.valid.valid(Str, regx);
+    },
+
+    /**
+     * Validates that the provided string isn't empty. This 
+     * method uses trim() to remove white space.
+     * @param Str is a string to validate.
+     * @returns A boolean with true for valid and false for not.
+     */
+    notEmpty: function (Str) {
+        if (Str.trim() !== "") {
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Validates that the provided string contains only ASCII 
+     * characters. You may specify if extended ASCII characters 
+     * should be allowed as well.
+     * @param Str is a string to validate.
+     * @param Extended is a boolean with true to allow extended 
+     * ASCII characters and false to not.
+     * @returns A boolean with true for valid and false for not.
+     */
+    asciiText: function (Str, Extended) {
+        Extended = setDef(Extended, false);
+        return (Extended ? /^[\x00-\xFF]*$/ : /^[\x00-\x7F]*$/).test(Str);
+    },
+
+    /**
+     * Validates that the provided string doesn't contain 
+     * any HTML in it.
+     * @param Str is a string to validate.
+     * @returns A boolean with true for valid and false for not.
+     */
+    noHtml: function (Str) {
+        return !$ic9.valid.valid(Str, /(<?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)?>)/ig);
     }
 };
+
+/*jslint regexp: false */

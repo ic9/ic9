@@ -40,7 +40,10 @@ function Ut_valid() {
         .add(this.validFloat, "Validate a float value.")
         .add(this.validNumber, "Validate a number value.")
         .add(this.validBoolean, "Validate a boolean value.")
-        .add(this.validPassword, "Validate a password value.");
+        .add(this.validPassword, "Validate a password value.")
+        .add(this.validNotEmpty, "Validate a provided string is not empty.")
+        .add(this.validAsciiText, "Validate a provided string is ASCII only.")
+        .add(this.validNoHtml, "Validate a provided string has no HTML.");
 }
 Ut_valid.prototype = new TestSet();
 
@@ -103,6 +106,21 @@ Ut_valid.prototype.validPassword = function () {
         SpecialChar: true
     };
     assert($ic9.valid.password("TestPass123_", opts));
+};
+
+Ut_valid.prototype.validNotEmpty = function () {
+    assert($ic9.valid.notEmpty("Some text."));
+    assert(!$ic9.valid.notEmpty(" \r\n"));
+};
+
+Ut_valid.prototype.validAsciiText = function () {
+    assert($ic9.valid.asciiText("Some ASCII text."));
+    assert(!$ic9.valid.asciiText("Some text with non ASCII chars (\u03A9)."));
+};
+
+Ut_valid.prototype.validNoHtml = function () {
+    assert($ic9.valid.noHtml("Some text."));
+    assert(!$ic9.valid.noHtml("Some text with <html> <p>text</p> in it."));
 };
 
 Ut_valid.prototype.constructor = Ut_valid;
