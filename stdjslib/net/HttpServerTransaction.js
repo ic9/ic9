@@ -319,8 +319,12 @@ HttpServerRequest.prototype.getParts = function () {
 
             hp.name = part.getName();
             hp.size = part.getSize();
-            hp.data = new Buffer(0);
-            hp.data.data = file.inStreamToBuffer(part.getInputStream());
+            if (hp.contentType === "application/octet-stream") {
+                hp.data = new Buffer(0);
+                hp.data.data = file.inStreamToBuffer(part.getInputStream());
+            } else {
+                hp.data  = new java.lang.String(file.inStreamToBuffer(part.getInputStream()));
+            }
             if (this.parts.hasOwnProperty(hp.name)) {
                 this.parts[hp.name].push(hp);
             } else {
