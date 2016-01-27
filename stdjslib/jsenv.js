@@ -350,3 +350,17 @@ Object.defineProperty(String.prototype, 'contains', {
 Array.prototype.get = function (Index) {
     return this[Index];
 };
+
+/**
+ * Generic JS exception.
+ * @param Message is a string with the exception message.
+ * @param Name is a string with the exception name. (Optional)
+ */
+function Exception(Message, Name) {
+    BaseObj.call(this);
+    this.message = setDef(Message, "");
+    this.name = setDef(Name, "");
+}
+Exception.prototype = new BaseObj();
+Exception.prototype.constructor = Exception;
+
