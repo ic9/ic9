@@ -16,6 +16,7 @@
 
 package com.lehman.ic9.db;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -26,6 +27,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Map;
 import java.util.Properties;
@@ -34,6 +36,7 @@ import javax.script.ScriptException;
 
 import com.lehman.ic9.ic9engine;
 import com.lehman.ic9.ic9exception;
+import com.lehman.ic9.ic9util;
 
 /**
  * Jdbc object implements generic Java JDBC functionality. This 
@@ -970,6 +973,8 @@ public class jdbc
 	 */
 	private Object getField(ResultSet rs, int colIndex, int colType) throws ic9exception
 	{
+	    Timestamp ts;
+	    BigDecimal bd;
 		try
 		{
 			switch(colType)
@@ -991,9 +996,14 @@ public class jdbc
 			case Types.DATALINK:
 				return ((URL)rs.getURL(colIndex)).toString();
 			case Types.DATE:
-				return this.eng.newDate(rs.getTimestamp(colIndex).getTime());
+			    ts = rs.getTimestamp(colIndex);
+                if (ts != null)
+                    return this.eng.newDate(ts.getTime());
+                else return null;
 			case Types.DECIMAL:
-				return rs.getBigDecimal(colIndex).doubleValue();
+			    bd = rs.getBigDecimal(colIndex);
+			    if (bd != null) return bd.doubleValue();
+			    else return null;
 			case Types.DISTINCT:
 				throw new ic9exception("jdbc.getField(): Column type DISTINCT not implemented.");
 			case Types.DOUBLE:
@@ -1019,7 +1029,9 @@ public class jdbc
 			case Types.NULL:
 				return null;
 			case Types.NUMERIC:
-				return rs.getBigDecimal(colIndex).doubleValue();
+			    bd = rs.getBigDecimal(colIndex);
+                if (bd != null) return bd.doubleValue();
+                else return null;
 			case Types.OTHER:
 				throw new ic9exception("jdbc.getField(): Column type OTHER not implemented.");
 			case Types.REAL:
@@ -1035,9 +1047,15 @@ public class jdbc
 			case Types.STRUCT:
 				throw new ic9exception("jdbc.getField(): Column type STRUCT not implemented.");
 			case Types.TIME:
-				return this.eng.newDate(rs.getTimestamp(colIndex).getTime());
+			    ts = rs.getTimestamp(colIndex);
+                if (ts != null)
+                    return this.eng.newDate(ts.getTime());
+                else return null;
 			case Types.TIMESTAMP:
-				return this.eng.newDate(rs.getTimestamp(colIndex).getTime());
+			    ts = rs.getTimestamp(colIndex);
+			    if (ts != null)
+			        return this.eng.newDate(ts.getTime());
+			    else return null;
 			case Types.TINYINT:
 				return rs.getByte(colIndex);
 			case Types.VARBINARY:
@@ -1052,11 +1070,11 @@ public class jdbc
 		}
 		catch(SQLException e)
 		{
-			throw new ic9exception("jdbc.getField(): " + e.getMessage());
+			throw new ic9exception("jdbc.getField():\n" + ic9util.stackTraceToString(e));
 		}
 		catch(Exception e)
 		{
-			throw new ic9exception("jdbc.getField(): " + e.getMessage());
+			throw new ic9exception("jdbc.getField():\n" + ic9util.stackTraceToString(e));
 		}
 	}
 
