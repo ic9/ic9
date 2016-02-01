@@ -48,16 +48,22 @@ function Html(spec) {
     if (isDef(spec)) {
         this.mixin(spec);
 
-        if (this.htype !== "text" && this.htype !== "doctype" && this.text) {
+        if (!isDef(this.attr)) {
+            this.attr = {};
+        }
+
+        if (this.htype !== "text" && this.htype !== "doctype") {
             this.children = [];
-            this.children.push(new Html({ htype: "text", text: spec.text }));
-            delete this.text;
+            if (isDef(this.classes) === true) {
+                this.classes = [];
+            }
+            if (this.text) {
+              this.children.push(new Html({ htype: "text", text: spec.text }));
+              delete this.text;
+            }
         }
 
         if (isDef(this.id)) {
-            if (!isDef(this.attr)) {
-                this.attr = {};
-            }
             this.attr.id = this.id;
             delete this.id;
         }
