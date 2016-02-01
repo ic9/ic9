@@ -16,6 +16,8 @@
 
 package com.lehman.ic9;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,5 +40,14 @@ public class ic9util
 		c.setTime(Dt);
 		c.add(Calendar.DATE, NumDays);
 		return c.getTime();
+	}
+	
+	public static String stackTraceToString(Exception e)
+	{
+	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	    PrintStream ps = new PrintStream(baos);
+	    e.printStackTrace(ps);
+	    ps.close();
+	    return baos.toString();
 	}
 }
