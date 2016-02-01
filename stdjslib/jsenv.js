@@ -258,6 +258,7 @@ Object.defineProperty(Object.prototype, 'contains', {
         if (Array.isArray(this)) { return (this.indexOf(Needle) > -1); }
         return this.hasOwnProperty(Needle);
     },
+    writable: true,
     enumerable: false
 });
 
@@ -277,6 +278,7 @@ Object.defineProperty(Object.prototype, 'mixin', {
         }
         return this;
     },
+    writable: true,
     enumerable: false
 });
 
@@ -305,6 +307,7 @@ Object.defineProperty(Object.prototype, 'toString', {
         }
         return ret;
     },
+    writable: true,
     enumerable: false
 });
 /*jslint forin:false */
@@ -325,6 +328,7 @@ Object.defineProperty(Object.prototype, 'length', {
         }
         return cnt;
     },
+    writable: true,
     enumerable: false
 });
 
@@ -337,6 +341,7 @@ Object.defineProperty(String.prototype, 'contains', {
     value : function (Str) {
         return this.indexOf(Str) !== -1;
     },
+    writable: true,
     enumerable: false
 });
 
