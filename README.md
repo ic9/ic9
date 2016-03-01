@@ -47,7 +47,6 @@ License: Apache2 (See LICENSE.txt)
 * SSH/Telnet support. (done)
 * SFTP/FTP support. (done)
 * SOAP web services. (in progress)
-* Socket support. (not started yet)
 
 # Installation
 There are no binary builds at this point. Installation currently consists of 
