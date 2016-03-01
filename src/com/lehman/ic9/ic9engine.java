@@ -287,18 +287,23 @@ public class ic9engine
 	 * Sets the list of arguments provided as the 'mainArgs' list 
 	 * within the script engine for use by the script. Arguments 
 	 * passed from the command line to the script are set here.
+	 * @param script is a String with the script name argument.
 	 * @param args is a List of Strings to set as the mainArgs.
 	 * @throws NoSuchMethodException Method not found.
 	 * @throws ScriptException Script exception.
 	 */
-	public void setMainArgs(List<String> args) throws NoSuchMethodException, ScriptException
+	public void setMainArgs(String script, List<String> args) throws NoSuchMethodException, ScriptException
 	{
+	    Map<String, Object> proc = this.newObj();
 		Object margs = this.newList();
-		this.eng.put("mainArgs", margs);
+		this.invokeMethod(margs, "push", "ic9");
+		this.invokeMethod(margs, "push", script);
 		for(String arg : args)
 		{
 			this.invokeMethod(margs, "push", arg);
 		}
+		proc.put("argv", margs);
+		this.eng.put("process", proc);
 	}
 	
 	/**

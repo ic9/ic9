@@ -70,13 +70,11 @@ public class ic9Main
 						
 						// Create the Ic9 engine and eval the script.
 						ic9engine eng = new ic9engine();
-						eng.setMainArgs(scriptArgs);
+						eng.setMainArgs(script, scriptArgs);
 						
 						// Remove shebang if it exists.
                         String contents = Pattern.compile("^#!/.*?$", Pattern.MULTILINE).matcher(file.read(script)).replaceAll("");
                         eng.eval(script, contents);
-						
-						eng.eval(script, file.read(script));
 						
 						// If -t flag, attempt to call test() function.
 						if(runTest) { eng.runTest(); }
