@@ -19,6 +19,7 @@ package com.lehman.ic9;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.script.ScriptException;
 
@@ -70,6 +71,11 @@ public class ic9Main
 						// Create the Ic9 engine and eval the script.
 						ic9engine eng = new ic9engine();
 						eng.setMainArgs(scriptArgs);
+						
+						// Remove shebang if it exists.
+                        String contents = Pattern.compile("^#!/.*?$", Pattern.MULTILINE).matcher(file.read(script)).replaceAll("");
+                        eng.eval(script, contents);
+						
 						eng.eval(script, file.read(script));
 						
 						// If -t flag, attempt to call test() function.
