@@ -82,6 +82,7 @@
 		        <include name="com/lehman/ic9/io/*.class" />
 		        <include name="com/lehman/ic9/net/*.class" />
 		        <include name="com/lehman/ic9/sys/*.class" />
+		        <include name="com/lehman/ic9/ui/*.class" />
 			</fileset>
 			<manifest>
 				<attribute name="Main-Class" value="com.lehman.ic9.ic9Main" />
