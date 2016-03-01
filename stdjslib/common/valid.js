@@ -212,7 +212,16 @@ $ic9.valid = {
      */
     noHtml: function (Str) {
         return !$ic9.valid.valid(Str, /(<?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)?>)/ig);
-    }
+    },
+    
+    /**
+     * Validates that the provided string is a proper Base64 string.
+     * @param Str is a string to validate.
+     * @returns A boolean with true for valid and false for not.
+     */
+    base64: function (Str) {
+        return $ic9.valid.valid(Str, /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/);
+    },
 };
 
 /*jslint regexp: false */
