@@ -69,4 +69,14 @@ var base64 = {
     decodeRaw : function (str) {
         return base64.native.decodeRaw(str);
     },
+
+    /**
+     * Computes RFC 2104-compliant HMAC signature.
+     * @param data Is a string with the data to encode.
+     * @param key Is a string with the key.
+     * @return A string with the encoded signature.
+     */
+    encodeHmac : function (Data, Key) {
+        return base64.native.encodeHmac(Data, Key);
+    },
 };

@@ -20,12 +20,19 @@ import org.apache.commons.codec.binary.Base64;
 
 import com.lehman.ic9.ic9exception;
 
+
+import java.security.SignatureException;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 /**
  * Support for base64 operations.
  * @author Austin Lehman
  */
 public class base64
 {
+    private static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
+    
 	/**
 	 * Base64 encodes the provided byte array and returns 
 	 * the encoded string. This method also hex encodes 
@@ -72,5 +79,37 @@ public class base64
 	{
 		return Base64.decodeBase64(str.getBytes());
 	}
+	
+	/**
+	 * Computes RFC 2104-compliant HMAC signature.
+	 * @param data Is a String with the data to encode.
+	 * @param key Is a String with the key.
+	 * @return A string with the encoded signature.
+	 * @throws SignatureException Exception
+	 */
+	public static String encodeHmac(String data, String key) throws java.security.SignatureException
+    {
+        String result;
+        try
+        {
+            // get an hmac_sha1 key from the raw key bytes
+            SecretKeySpec signingKey = new SecretKeySpec(key.getBytes(), HMAC_SHA1_ALGORITHM);
+            
+            // get an hmac_sha1 Mac instance and initialize with the signing key
+            Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+            mac.init(signingKey);
+            
+            // compute the hmac on input data bytes
+            byte[] rawHmac = mac.doFinal(data.getBytes());
+            
+            // base64-encode the hmac
+            result = new String(Base64.encodeBase64(rawHmac));
+        }
+        catch (Exception e)
+        {
+            throw new SignatureException("Failed to generate HMAC : " + e.getMessage());
+        }
+        return result;
+    }
 }
 
