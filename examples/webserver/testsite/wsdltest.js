@@ -24,7 +24,7 @@ function handle(req, res)
 	person
 		.add(new WsSchemaNode("firstName", dataType.string))
 		.add(new WsSchemaNode("lastName", dataType.string))
-		.add(new WsSchemaNode("age", dataType.int))
+		.add(new WsSchemaNode("age", dataType.long))
 		.add(new WsSchemaNode("emailAddress", dataType.string, true))
 	;
 	
@@ -47,14 +47,24 @@ function handle(req, res)
 	{
 	    if (req.headers.hasOwnProperty("SOAPAction")) {
 	        console.info("SOAPAction: " + req.headers.SOAPAction);
+	        
+	        // Handle POST request.
+	        var content = req.getContent();
+	        console.info("Post Content:\n" + content);
+	        
+	        var wsreq = wsInt.parseRequest(req.headers.SOAPAction, content);
+	        console.log("parsed request: ");
+	        console.log(wsreq.toString(true));
+	        
+	        // Build response.
+	        var ret = wsInt.createResponse(req.headers.SOAPAction, { callResponse: { success: true, error: "" } });
+	        console.log("generated response:\n" + ret);
+	        
+	        res.println(ret);
 	    } else {
+	        // Probably return a HTTP status code here ...
 	        console.info("SOAPAction: Error, not set by client!");
 	    }
-	    
-		// Handle POST request.
-		var content = req.getContent();
-		console.info("Post Content:\n" + xml.parse(content).toString(true));
-		res.println(content);
 	}
 	else
 	{

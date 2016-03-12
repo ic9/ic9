@@ -32,7 +32,7 @@ include("common/xml.js");
  */
 var dataType = {
     "string":   "string",                   // String
-    "int":      "long",                     // Int64
+    "long":      "long",                    // Int64
     "double":   "double",                   // Double precision float
     "boolean":  "boolean",                  // Boolean
     "buffer":   "buffer",                   // Buffer
@@ -97,14 +97,14 @@ function WsInterface(Host, Name) {
     this.host = Host || "";
     this.name = Name || "";
 
-    this.calls = [];
+    this.calls = {};
 
     this.description = "";
 }
 WsInterface.prototype = new BaseObj();
 
 WsInterface.prototype.addCall = function (Name, ReqObj, ResObj) {
-    this.calls.push(new WsCall(Name, ReqObj, ResObj));
+    this.calls[Name] = new WsCall(Name, ReqObj, ResObj);
     return this;
 };
 
@@ -128,78 +128,80 @@ WsInterface.prototype.toWsdl = function () {
     };
     wsdlChildren.push(item);
 
-    for (i = 0; i < this.calls.length; i += 1) {
-        call = this.calls[i];
-        // Request
-        item = {
-            name: "wsdl:message",
-            attr: { name: call.name + "Input" },
-            children: [
-                { name: "wsdl:part", attr: { name: call.reqObj.name, element: "tns:" + call.reqObj.name } }
-            ]
-        };
-        wsdlChildren.push(item);
-
-        // Response
-        item = {
-            name: "wsdl:message",
-            attr: { name: call.name + "Output" },
-            children: [
-                { name: "wsdl:part", attr: { name: call.resObj.name, element: "tns:" + call.resObj.name } }
-            ]
-        };
-        wsdlChildren.push(item);
-
-        // Port
-        item = {
-            name: "wsdl:portType",
-            attr: { name: call.name + "PortType" },
-            children: [
-                {
-                    name: "wsdl:operation",
-                    attr: { name: call.name },
-                    children: [
-                        { name: "wsdl:input", attr: { message: "tns:" + call.name + "Input" } },
-                        { name: "wsdl:output", attr: { message: "tns:" + call.name + "Output" } }
-                    ]
-                }
-            ]
-        };
-        wsdlChildren.push(item);
-
-        // Binding
-        item = {
-            name: "wsdl:binding",
-            attr: { name: call.name + "Binding", type: "tns:" + call.name + "PortType" },
-            children: [
-                { name: "soap:binding", attr: { style: "document", transport: "http://schemas.xmlsoap.org/soap/http" } },
-                {
-                    name: "wsdl:operation",
-                    attr: { name: call.name },
-                    children: [
-                        { name: "soap:operation", attr: { soapAction: call.name } },
-                        {
-                            name: "wsdl:input",
-                            children: [ { name: "soap:body", attr: { use: "literal" } } ]
-                        },
-                        {
-                            name: "wsdl:output",
-                            children: [ { name: "soap:body", attr: { use: "literal" } } ]
-                        }
-                    ]
-                }
-            ]
-        };
-        wsdlChildren.push(item);
-        
-        item = {
-            name: "wsdl:port",
-            attr: { name: call.name + "Port", binding: "tns:" + call.name + "Binding" },
-            children: [
-                { name: "soap:address", attr: { location: this.host } }
-            ]
-        };
-        ports.push(item);
+    for (var name in this.calls) {
+        if (this.calls.hasOwnProperty(name)) {
+            call = this.calls[name];
+            // Request
+            item = {
+                name: "wsdl:message",
+                attr: { name: call.name + "Input" },
+                children: [
+                    { name: "wsdl:part", attr: { name: call.reqObj.name, element: "tns:" + call.reqObj.name } }
+                ]
+            };
+            wsdlChildren.push(item);
+    
+            // Response
+            item = {
+                name: "wsdl:message",
+                attr: { name: call.name + "Output" },
+                children: [
+                    { name: "wsdl:part", attr: { name: call.resObj.name, element: "tns:" + call.resObj.name } }
+                ]
+            };
+            wsdlChildren.push(item);
+    
+            // Port
+            item = {
+                name: "wsdl:portType",
+                attr: { name: call.name + "PortType" },
+                children: [
+                    {
+                        name: "wsdl:operation",
+                        attr: { name: call.name },
+                        children: [
+                            { name: "wsdl:input", attr: { message: "tns:" + call.name + "Input" } },
+                            { name: "wsdl:output", attr: { message: "tns:" + call.name + "Output" } }
+                        ]
+                    }
+                ]
+            };
+            wsdlChildren.push(item);
+    
+            // Binding
+            item = {
+                name: "wsdl:binding",
+                attr: { name: call.name + "Binding", type: "tns:" + call.name + "PortType" },
+                children: [
+                    { name: "soap:binding", attr: { style: "document", transport: "http://schemas.xmlsoap.org/soap/http" } },
+                    {
+                        name: "wsdl:operation",
+                        attr: { name: call.name },
+                        children: [
+                            { name: "soap:operation", attr: { soapAction: call.name } },
+                            {
+                                name: "wsdl:input",
+                                children: [ { name: "soap:body", attr: { use: "literal" } } ]
+                            },
+                            {
+                                name: "wsdl:output",
+                                children: [ { name: "soap:body", attr: { use: "literal" } } ]
+                            }
+                        ]
+                    }
+                ]
+            };
+            wsdlChildren.push(item);
+            
+            item = {
+                name: "wsdl:port",
+                attr: { name: call.name + "Port", binding: "tns:" + call.name + "Binding" },
+                children: [
+                    { name: "soap:address", attr: { location: this.host } }
+                ]
+            };
+            ports.push(item);
+        }
     }
 
     ports.push({ name: "wsdl:documentation", value: this.description });
@@ -235,14 +237,16 @@ WsInterface.prototype.toWsdl = function () {
 WsInterface.prototype.getWsdlTypes = function () {
     var i, call, wsdl = [];
 
-    for (i = 0; i < this.calls.length; i += 1) {
-        call = this.calls[i];
+    for (var name in this.calls) {
+        if (this.calls.hasOwnProperty(name)) {
+            call = this.calls[name];
 
-        // Request object.
-        wsdl.push(this.toWsdlSchemaNode(call.reqObj));
-
-        // Response object.
-        wsdl.push(this.toWsdlSchemaNode(call.resObj));
+            // Request object.
+            wsdl.push(this.toWsdlSchemaNode(call.reqObj));
+    
+            // Response object.
+            wsdl.push(this.toWsdlSchemaNode(call.resObj));
+        }
     }
 
     return wsdl;
@@ -299,6 +303,176 @@ WsInterface.prototype.toWsdlSchemaNode = function (SchemaNode) {
     }
 
     return wsdl;
+};
+
+WsInterface.prototype.parseRequest = function (CallName, Content) {
+    var i, soapns = '', wsdlns = '', match, name, body, reqXmlObj, cname = CallName.replace(/\"/g, "");
+    // First see if the call actually exists.
+    if (!isDef(this.calls[cname])) { throw ("WsInterface.parseRequest(): Call '" + cname + "' not found in interface."); }
+    
+    var robj = xml.parse(xml.prolog() + Content);
+    if (isDef(robj) && isDef(robj.attr)) {
+        for (name in robj.attr) {
+            if (name.startsWith("xmlns:")) {
+                match = name.match(/xmlns:(.*)/);
+                if (match !== null && match.length > 1) {
+                    if (robj.attr[name].startsWith("http://schemas.xmlsoap.org/soap/envelope")) {
+                        soapns = match[1];
+                    } else if (robj.attr[name].startsWith(this.host)) {
+                        wsdlns = match[1];
+                    }
+                }
+            }
+        }
+    } else { throw ("WsInterface.parseRequest(): Malformed SOAP request. Root node is missing or has no attributes."); }
+    
+    if (!isDef(soapns) || soapns.trim() === "") {
+        throw ("WsInterface.parseRequest(): Malformed request, SOAP namespace is missing or blank.");
+    }
+    if (!isDef(wsdlns) || wsdlns.trim() === "") {
+        throw ("WsInterface.parseRequest(): Malformed request, WSDL namespace is missing or blank.");
+    }
+    
+    // We are disregarding the header at this point.
+    
+    // Soap body.
+    for (i = 0; i < robj.children.length; i += 1) {
+        if (isDef(robj.children[i].name) && robj.children[i].name === soapns + ":Body") {
+            body = robj.children[i];
+            break;
+        }
+    }
+    
+    if (isDef(body)) {
+        return this.getRequest([this.calls[cname].reqObj], body, wsdlns);
+    } else {
+        throw ("WsInterface.parseRequest(): Malformed request, " + soapns + ":Body section not found.");
+    }
+};
+
+WsInterface.prototype.getRequest = function (reqList, xmlObj, wsdlns) {
+    var i, j, found, ret = {};
+    
+    for (i = 0; i < reqList.length; i += 1) {
+        var rreq = reqList[i];
+        var minocc = 1;
+        var maxocc = 1;
+        if (rreq.minOccurs !== -1) { minocc = rreq.minOccurs; }
+        if (rreq.maxOccurs === "unbounded") { maxocc = -1; }
+        
+        var xmlName = rreq.name;
+        if (rreq.type === "object") {
+            xmlName = wsdlns + ":" + rreq.name;
+        }
+        found = this.getReqItemsByName(xmlObj.children, xmlName);
+        
+        if (found.length < minocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting at least " + minocc + " occurances."); }
+        if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting no more than " + maxocc + " occurances."); }
+        
+        if (maxocc !== 1) {
+            ret[rreq.name] = [];
+            for (j = 0; j < found.length; j += 1) {
+                if (rreq.children.length === 0) { ret[rreq.name].push(found[j].value); }
+                else ret[rreq.name].push(this.getRequest(rreq.children, found[j], wsdlns));
+            }
+        } else {
+            if (rreq.children.length === 0) { ret[rreq.name] = found[0].value; }
+            else ret[rreq.name] = this.getRequest(rreq.children, found[0], wsdlns);
+        }
+    }
+    return ret;
+};
+
+/**
+ * Gets a list of XML nodes by name in the current object.
+ */
+WsInterface.prototype.getReqItemsByName = function (xmlList, name) {
+    var i, ret = [], node;
+    
+    for (i = 0; i < xmlList.length; i += 1) {
+        node = xmlList[i];
+        if (isDef(node.name) && node.name === name) {
+            ret.push(node);
+        }
+    }
+    
+    return ret;
+};
+
+/**
+ * Creates the response XML string with the provided schema node 
+ * name and response object.
+ */
+WsInterface.prototype.createResponse = function (CallName, InObj) {
+    var i, retList, call, cname = CallName.replace(/\"/g, ""), envelope;
+    
+    if (!isDef(cname) || cname.trim() === "") { throw ("WsInterface.createResponse(): CallName is undefined or blank string."); }
+    if (!isDef(InObj)) { throw ("WsInterface.createResponse(): InObj is required."); }
+    
+    if (!isDef(this.calls[cname])) { throw ("WsInterface.parseRequest(): Call '" + cname + "' not found in interface."); }
+    
+    retList = this.buildResponse(this.calls[cname].resObj, InObj);
+    
+    envelope = {
+        name: "soapenv:Envelope",
+        attr: {
+            "xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
+            "xmlns:wsd": this.host
+        },
+        children: [ { name: "soapenv:Header" }, { name: "soapenv:Body", children: retList } ]
+    };
+    
+    // Convert to XML and return.
+    return xml.prolog() + xml.toXml(envelope);
+};
+
+// For each node in the 
+WsInterface.prototype.buildResponse = function (resObj, InObj) {
+    var minocc = 1, maxocc = 1, i, j, item, ret = [];
+    if (resObj.minOccurs !== -1) { minocc = rreq.minOccurs; }
+    if (resObj.maxOccurs === "unbounded") { maxocc = -1; }
+    
+    var found = this.getResItemsByName(InObj, resObj.name);
+    if (found.length < minocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting at least " + minocc + " occurances."); }
+    if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting no more than " + maxocc + " occurances."); }
+    
+    if (resObj.type === dataType.object) {
+        item = { name: "wsd:" + resObj.name, children: [] };
+        for (i = 0; i < resObj.children.length; i += 1) {
+            for (j = 0; j < found.length; j += 1) {
+                Array.prototype.push.apply(item.children, this.buildResponse(resObj.children[i], found[j]));
+            }
+        }
+        ret.push(item);
+    } else {
+        for (i = 0; i < found.length; i += 1) {
+            ret.push({ name: resObj.name, value: "" + found[i] });
+        }
+    }
+    
+    return ret;
+};
+
+/**
+ * Gets a list of XML nodes by name in the current object.
+ */
+WsInterface.prototype.getResItemsByName = function (InObj, name) {
+    var i, ret = [], obj;
+    
+    if (isArr(InObj)) {
+        for (i = 0; i < xmlList.length; i += 1) {
+            obj = InObj[i];
+            if (obj.hasOwnProperty(name)) {
+                ret.push(obj[name]);
+            }
+        }
+    } else {
+        if (InObj.hasOwnProperty(name)) {
+            ret.push(InObj[name]);
+        }
+    }
+    
+    return ret;
 };
 
 WsInterface.prototype.constructor = WsInterface;
