@@ -394,7 +394,7 @@ HttpServerResponse.prototype.setCookie = function (CookieObj) {
     if (!isDef(CookieObj.value)) { throw ("HttpServerResponse.addCookie(): Value is not set."); }
     var jc = new javax.servlet.http.Cookie(CookieObj.name, CookieObj.value);
     if (isDef(CookieObj.comment)) { jc.setComment(CookieObj.comment); }
-    if (isDef(CookieObj.domain)) { jc.setDomain(CookieObj.domain); }
+    //if (isDef(CookieObj.domain)) { jc.setDomain(CookieObj.domain); }
     if (isDef(CookieObj.httpOnly)) { jc.setHttpOnly(CookieObj.httpOnly); }
     if (isDef(CookieObj.maxAge)) { jc.setMaxAge(CookieObj.maxAge); }
     if (isDef(CookieObj.secure)) { jc.setSecure(CookieObj.secure); }
