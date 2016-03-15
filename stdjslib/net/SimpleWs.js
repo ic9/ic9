@@ -366,8 +366,8 @@ WsInterface.prototype.getRequest = function (reqList, xmlObj, wsdlns) {
         }
         found = this.getReqItemsByName(xmlObj.children, xmlName);
         
-        if (found.length < minocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting at least " + minocc + " occurances."); }
-        if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting no more than " + maxocc + " occurances."); }
+        if (found.length < minocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting at least " + minocc + " occurrences."); }
+        if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.parseRequest(): Node '" + xmlName + "' expecting no more than " + maxocc + " occurrences."); }
         
         if (maxocc !== 1) {
             ret[rreq.name] = [];
@@ -433,8 +433,8 @@ WsInterface.prototype.buildResponse = function (resObj, InObj) {
     if (resObj.maxOccurs === "unbounded") { maxocc = -1; }
     
     var found = this.getResItemsByName(InObj, resObj.name);
-    if (found.length < minocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting at least " + minocc + " occurances."); }
-    if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting no more than " + maxocc + " occurances."); }
+    if (found.length < minocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting at least " + minocc + " occurrences."); }
+    if (maxocc !== -1 && found.length > maxocc) { throw ("WsInterface.createResponse(): Node '" + resObj.name + "' is expecting no more than " + maxocc + " occurrences."); }
     
     if (resObj.type === dataType.object) {
         item = { name: "wsd:" + resObj.name, children: [] };
