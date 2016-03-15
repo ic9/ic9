@@ -116,17 +116,21 @@ public class xml
 		{
 		case ELEMENT_NODE:
 			getAttributesFromJavaAttributes(jel, jobj);
-			
 			for(int i = 0; i < jel.getChildNodes().getLength(); i++)
 			{
 				Node tel = (Node)jel.getChildNodes().item(i);
-				
 				if(!tel.getNodeName().startsWith("#text"))
 				{
     				Map<String, Object> nobj = newNode(eng);
     				nobj.put("name", tel.getNodeName());
     				xml.getIc9ElementsFromJavaElement(eng, tel, nobj);
     				eng.invokeMethod(jobj.get("children"), "push", nobj);
+				} else {
+				    if (!tel.getNodeValue().equals(""))
+				    {
+				        if (jobj.get("value") == null) { jobj.put("value", tel.getNodeValue()); }
+				        else { jobj.put("value", jobj.get("value") + tel.getNodeValue()); }
+				    }
 				}
 			}
 			break;
