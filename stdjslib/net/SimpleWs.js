@@ -32,7 +32,7 @@ include("common/xml.js");
  */
 var dataType = {
     "string":   "string",                   // String
-    "long":      "long",                    // Int64
+    "int":      "long",                     // Int64
     "double":   "double",                   // Double precision float
     "boolean":  "boolean",                  // Boolean
     "buffer":   "buffer",                   // Buffer
@@ -299,7 +299,7 @@ WsInterface.prototype.toWsdlSchemaNode = function (SchemaNode) {
             }
         };
         if (SchemaNode.minOccurs >= 0) { wsdl.attr.minOccurs = SchemaNode.minOccurs; }
-        if (SchemaNode.maxOccurs === "unbounded" || SchemaNode.maxOccurs >= 0) { wsdl.addr.maxOccurs = SchemaNode.maxOccurs; }
+        if (SchemaNode.maxOccurs === "unbounded" || SchemaNode.maxOccurs >= 0) { wsdl.attr.maxOccurs = SchemaNode.maxOccurs; }
     }
 
     return wsdl;
@@ -376,7 +376,7 @@ WsInterface.prototype.getRequest = function (reqList, xmlObj, wsdlns) {
                 else ret[rreq.name].push(this.getRequest(rreq.children, found[j], wsdlns));
             }
         } else {
-            if (rreq.children.length === 0) { ret[rreq.name] = found[0].value; }
+            if (rreq.children.length === 0) { if (found.length > 0) { ret[rreq.name] = found[0].value; } }
             else ret[rreq.name] = this.getRequest(rreq.children, found[0], wsdlns);
         }
     }
