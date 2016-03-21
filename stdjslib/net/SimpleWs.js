@@ -311,7 +311,7 @@ WsInterface.prototype.parseRequest = function (CallName, Content) {
     if (!isDef(this.calls[cname])) { throw ("WsInterface.parseRequest(): Call '" + cname + "' not found in interface."); }
     
     var xdata = Content;
-    if (!xdata.toLowerCase().startsWith("<xml")) { xdata = xml.prolog() + Content; }
+    if (!xdata.toLowerCase().startsWith("<?xml")) { xdata = xml.prolog() + Content; }
     var robj = xml.parse(xdata);
     if (isDef(robj) && isDef(robj.attr)) {
         for (name in robj.attr) {
