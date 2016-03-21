@@ -310,7 +310,9 @@ WsInterface.prototype.parseRequest = function (CallName, Content) {
     // First see if the call actually exists.
     if (!isDef(this.calls[cname])) { throw ("WsInterface.parseRequest(): Call '" + cname + "' not found in interface."); }
     
-    var robj = xml.parse(xml.prolog() + Content);
+    var xdata = Content;
+    if (!xdata.toLowerCase().startsWith("<xml")) { data = xml.prolog() + Content; }
+    var robj = xml.parse(xdata);
     if (isDef(robj) && isDef(robj.attr)) {
         for (name in robj.attr) {
             if (name.startsWith("xmlns:")) {
@@ -328,9 +330,6 @@ WsInterface.prototype.parseRequest = function (CallName, Content) {
     
     if (!isDef(soapns) || soapns.trim() === "") {
         throw ("WsInterface.parseRequest(): Malformed request, SOAP namespace is missing or blank.");
-    }
-    if (!isDef(wsdlns) || wsdlns.trim() === "") {
-        throw ("WsInterface.parseRequest(): Malformed request, WSDL namespace is missing or blank.");
     }
     
     // We are disregarding the header at this point.
@@ -351,7 +350,8 @@ WsInterface.prototype.parseRequest = function (CallName, Content) {
 };
 
 WsInterface.prototype.getRequest = function (reqList, xmlObj, wsdlns) {
-    var i, j, found, ret = {};
+    var i, j, found, ret = {}, wns = wsdlns + ":";
+    if (wsdlns.trim() === "") { wns = ""; }
     
     for (i = 0; i < reqList.length; i += 1) {
         var rreq = reqList[i];
@@ -362,7 +362,7 @@ WsInterface.prototype.getRequest = function (reqList, xmlObj, wsdlns) {
         
         var xmlName = rreq.name;
         if (rreq.type === "object") {
-            xmlName = wsdlns + ":" + rreq.name;
+            xmlName = wns + rreq.name;
         }
         found = this.getReqItemsByName(xmlObj.children, xmlName);
         
