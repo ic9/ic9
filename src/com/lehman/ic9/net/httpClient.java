@@ -48,6 +48,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -807,6 +808,7 @@ public class httpClient
 				Object val = jobj.get(key);
 				nvps.add(new BasicNameValuePair(key, val.toString()));
 			}
+			this.respEnt = new UrlEncodedFormEntity(nvps);
 		}
 		else if(pt == postType.MULTIPART)
 		{
