@@ -19,6 +19,7 @@ package com.lehman.ic9.net;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.net.ssl.SSLServerSocketFactory;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -229,6 +230,11 @@ public class httpServer extends AbstractHandler
 			SslContextFactory contextFactory = new SslContextFactory();
 			contextFactory.setKeyStorePath(this.keyStoreFile);
 			contextFactory.setKeyStorePassword(this.keyStorePass);
+			
+			SSLServerSocketFactory ssf = (SSLServerSocketFactory)SSLServerSocketFactory.getDefault();
+			String[] defaultCiphers = ssf.getDefaultCipherSuites();
+			contextFactory.setIncludeCipherSuites(defaultCiphers);
+			
 			SslConnectionFactory sslFact = new SslConnectionFactory(contextFactory, org.eclipse.jetty.http.HttpVersion.HTTP_1_1.toString());
 			
 			HttpConfiguration cfg = new HttpConfiguration();
