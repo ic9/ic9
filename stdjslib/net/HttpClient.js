@@ -152,6 +152,99 @@ HttpClient.prototype.postBinary = function (PostTypeStr, Obj, ContentType) {
     return this.native.postString(PostTypeStr, Obj, ContentType);
 };
 
+/**
+ * Performs a HTTP PUT call and returns the results of the call as 
+ * a String. The result object sets the response body as the 'content' 
+ * property of the result object.
+ * <br><br>
+ * 
+ * URL_ENCODED: When post type is set as url_encoded it is expected this 
+ * the provided object is a JS object with properties set as key/value 
+ * pairs to be used as the post parameters. In this case ContentType argument 
+ * is ignored.
+ * <br><br>
+ * 
+ * MULTIPART: When post type is set as multipart it is expected this the 
+ * provided object is an object/map where the values are HttpPart JS objects. 
+ * (See net/HttpPart.js for details.) For each part provided, only the 'name' 
+ * and 'data' properties need to be set, and the 'data' property is expected 
+ * to be a Java byte[]. In this case the ContentType argument is ignored.
+ * <br><br>
+ * 
+ * CUSTOM: When the post type is set at custom it is expected this the provided 
+ * object is either a plain String or a JS Buffer object. The Obj String or 
+ * Buffer object is written as the body of the request and the ContentType 
+ * argument must be set. Use this for example when you want to post JSON data. 
+ * In this case you'd set the Obj as the JSON encoded string and then set 
+ * ContentType to 'application/json'.
+ * 
+ * @param PostTypeStr A String with the post type. (See postType for options.)
+ * @param Obj Is an Object. (See above for details.)
+ * @param ContentType is a String with the request content type.
+ * @return A Javascript object with the response.
+ */
+HttpClient.prototype.putString = function (PostTypeStr, Obj, ContentType) {
+    return this.native.putString(PostTypeStr, Obj, ContentType);
+};
+
+/**
+ * Performs a HTTP PUT call and returns the results of the call as 
+ * a Buffer object. The result object sets the response body as the 'content' 
+ * property of the result object.
+ * <br><br>
+ * 
+ * URL_ENCODED: When post type is set as url_encoded it is expected this 
+ * the provided object is a JS object with properties set as key/value 
+ * pairs to be used as the post parameters. In this case ContentType argument 
+ * is ignored.
+ * <br><br>
+ * 
+ * MULTIPART: When post type is set as multipart it is expected this the 
+ * provided object is an object/map where the values are HttpPart JS objects. 
+ * (See net/HttpPart.js for details.) For each part provided, only the 'name' 
+ * and 'data' properties need to be set, and the 'data' property is expected 
+ * to be a Java byte[]. In this case the ContentType argument is ignored.
+ * <br><br>
+ * 
+ * CUSTOM: When the post type is set at custom it is expected this the provided 
+ * object is either a plain String or a JS Buffer object. The Obj String or 
+ * Buffer object is written as the body of the request and the ContentType 
+ * argument must be set. Use this for example when you want to post JSON data. 
+ * In this case you'd set the Obj as the JSON encoded string and then set 
+ * ContentType to 'application/json'.
+ * 
+ * @param PostTypeStr A String with the post type. (See postType for options.)
+ * @param Obj Is an Object. (See above for details.)
+ * @param ContentType is a String with the request content type.
+ * @return A Javascript object with the response.
+ */
+HttpClient.prototype.putBinary = function (PostTypeStr, Obj, ContentType) {
+    return this.native.putString(PostTypeStr, Obj, ContentType);
+};
+
+/**
+ * Performs a HTTP DELETE call and returns the results of the call as 
+ * a string. The result object sets the response body as the 'content' 
+ * property of the result object.
+ * @return A Javascript object with the response.
+ */
+HttpClient.prototype.deleteString = function () {
+    return this.native.deleteString();
+};
+
+/**
+ * Performs a HTTP DELETE call and returns the results of the call as 
+ * a Buffer object. The result object sets the response body as the 'content' 
+ * property of the result object.
+ * @return A Javascript object with the response.
+ */
+HttpClient.prototype.deleteBinary = function () {
+    return this.native.deleteBinary();
+};
+
+
+
+
 /*
  * GETTERS
  */

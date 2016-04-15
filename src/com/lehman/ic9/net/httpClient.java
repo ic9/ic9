@@ -50,8 +50,11 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.config.RequestConfig.Builder;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
@@ -112,6 +115,14 @@ public class httpClient
 		CUSTOM
 	}
 	
+	enum httpReqType
+	{
+	    GET,
+	    POST,
+	    PUT,
+	    DELETE
+	}
+	
 	private CookieStore cs = null;
 	private CredentialsProvider cp = null;
 	private Builder rcb = null;
@@ -159,7 +170,7 @@ public class httpClient
 	 */
 	public Map<String,Object> getString() throws ic9exception, NoSuchMethodException, ScriptException
 	{
-		return this.performRequest(true, false);
+		return this.performRequest(true, httpReqType.GET);
 	}
 	
 	/**
@@ -173,7 +184,7 @@ public class httpClient
 	 */
 	public Map<String,Object> getBinary() throws ic9exception, NoSuchMethodException, ScriptException
 	{
-		return this.performRequest(false, false);
+		return this.performRequest(false, httpReqType.GET);
 	}
 	
 	/**
@@ -213,7 +224,7 @@ public class httpClient
 		try
 		{
 			this.setPostInfo(PostTypeStr, Obj, ContentType);
-			return this.performRequest(true, true);
+			return this.performRequest(true, httpReqType.POST);
 		}
 		catch (UnsupportedEncodingException e) { throw new ic9exception("httpClient.postString(): Unsupported encoding exception. " + e.getMessage()); }
 	}
@@ -255,11 +266,122 @@ public class httpClient
 		try
 		{
 			this.setPostInfo(PostTypeStr, Obj, ContentType);
-			return this.performRequest(false, true);
+			return this.performRequest(false, httpReqType.POST);
 		}
 		catch (UnsupportedEncodingException e) { throw new ic9exception("httpClient.postBinary(): Unsupported encoding exception. " + e.getMessage()); }
 	}
 	
+	/**
+     * Performs a HTTP PUT call and returns the results of the call as 
+     * a String. The result object sets the response body as the 'content' 
+     * property of the result object.
+     * 
+     * URL_ENCODED: When post type is set as url_encoded it is expected that 
+     * the provided object is a JS object with properties set as key/value 
+     * pairs to be used as the post parameters. In this case ContentType argument 
+     * is ignored.
+     * 
+     * MULTIPART: When post type is set as multipart it is expected that the 
+     * provided object is an object/map where the values are httpPart JS objects. 
+     * (See net/httpPart.js for details.) For each part provided, only the 'name' 
+     * and 'data' properties need to be set, and the 'data' property is expected 
+     * to be a Java byte[]. In this case the ContentType argument is ignored.
+     * 
+     * CUSTOM: When the post type is set at custom it is expected that the provided 
+     * object is either a plain String or a JS Buffer object. The Obj String or 
+     * Buffer object is written as the body of the request and the ContentType 
+     * argument must be set. Use this for example when you want to post JSON data. 
+     * In this case you'd set the Obj as the JSON encoded string and then set 
+     * ContentType to 'application/json'.
+     * 
+     * @param PostTypeStr A String with the post type. (See postType for options.)
+     * @param Obj Is an Object. (See above for details.)
+     * @param ContentType is a String with the request content type.
+     * @return A Javascript object with the response.
+     * @throws ic9exception Exception
+     * @throws NoSuchMethodException Exception
+     * @throws ScriptException Exception
+     */
+    public Map<String,Object> putString(String PostTypeStr, Object Obj, String ContentType) throws ic9exception, NoSuchMethodException, ScriptException
+    {
+        // Set type, entity and content-type if applicable for custom.
+        try
+        {
+            this.setPostInfo(PostTypeStr, Obj, ContentType);
+            return this.performRequest(true, httpReqType.PUT);
+        }
+        catch (UnsupportedEncodingException e) { throw new ic9exception("httpClient.putString(): Unsupported encoding exception. " + e.getMessage()); }
+    }
+    
+    /**
+     * Performs a HTTP PUT call and returns the results of the call as 
+     * a Buffer object. The result object sets the response body as the 'content' 
+     * property of the result object.
+     * 
+     * URL_ENCODED: When post type is set as url_encoded it is expected that 
+     * the provided object is a JS object with properties set as key/value 
+     * pairs to be used as the post parameters. In this case ContentType argument 
+     * is ignored.
+     * 
+     * MULTIPART: When post type is set as multipart it is expected that the 
+     * provided object is an object/map where the values are httpPart JS objects. 
+     * (See net/httpPart.js for details.) For each part provided, only the 'name' 
+     * and 'data' properties need to be set, and the 'data' property is expected 
+     * to be a Java byte[]. In this case the ContentType argument is ignored.
+     * 
+     * CUSTOM: When the post type is set at custom it is expected that the provided 
+     * object is either a plain String or a JS Buffer object. The Obj String or 
+     * Buffer object is written as the body of the request and the ContentType 
+     * argument must be set. Use this for example when you want to post JSON data. 
+     * In this case you'd set the Obj as the JSON encoded string and then set 
+     * ContentType to 'application/json'.
+     * 
+     * @param PostTypeStr A String with the post type. (See postType for options.)
+     * @param Obj Is an Object. (See above for details.)
+     * @param ContentType is a String with the request content type.
+     * @return A Javascript object with the response.
+     * @throws ic9exception Exception
+     * @throws NoSuchMethodException Exception
+     * @throws ScriptException Exception
+     */
+    public Map<String,Object> putBinary(String PostTypeStr, Object Obj, String ContentType) throws ic9exception, NoSuchMethodException, ScriptException
+    {
+        // Set type, entity and content-type if applicable for custom.
+        try
+        {
+            this.setPostInfo(PostTypeStr, Obj, ContentType);
+            return this.performRequest(false, httpReqType.PUT);
+        }
+        catch (UnsupportedEncodingException e) { throw new ic9exception("httpClient.putBinary(): Unsupported encoding exception. " + e.getMessage()); }
+    }
+	
+    /**
+     * Performs a HTTP DELETE call and returns the results of the call as 
+     * a string. The result object sets the response body as the 'content' 
+     * property of the result object.
+     * @return A Javascript object with the response.
+     * @throws ic9exception Exception
+     * @throws NoSuchMethodException Exception
+     * @throws ScriptException Exception
+     */
+    public Map<String,Object> deleteString() throws ic9exception, NoSuchMethodException, ScriptException
+    {
+        return this.performRequest(true, httpReqType.DELETE);
+    }
+    
+    /**
+     * Performs a HTTP DELETE call and returns the results of the call as 
+     * a Buffer object. The result object sets the response body as the 'content' 
+     * property of the result object.
+     * @return A Javascript object with the response.
+     * @throws ic9exception Exception
+     * @throws NoSuchMethodException Exception
+     * @throws ScriptException Exception
+     */
+    public Map<String,Object> deleteBinary() throws ic9exception, NoSuchMethodException, ScriptException
+    {
+        return this.performRequest(false, httpReqType.DELETE);
+    }
 	
 	/*
 	 * GETTERS
@@ -562,14 +684,15 @@ public class httpClient
 	 * @throws NoSuchMethodException Exception
 	 * @throws ScriptException Exception
 	 */
-	private Map<String,Object> performRequest(boolean getString, boolean post) throws ic9exception, NoSuchMethodException, ScriptException
+	private Map<String,Object> performRequest(boolean getString, httpReqType reqType) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		Map<String,Object> ret = this.eng.newObj(null);
 		
-		HttpGet httpGet = null;
-		HttpPost httpPost = null;
-		if(!post) httpGet = new HttpGet(this.u.toString());
-		else httpPost = new HttpPost(this.u.toString());
+		HttpRequestBase httpReq = null;
+		if(reqType == httpReqType.GET) httpReq = new HttpGet(this.u.toString());
+		else if (reqType == httpReqType.POST) httpReq = new HttpPost(this.u.toString());
+		else if (reqType == httpReqType.PUT) httpReq = new HttpPut(this.u.toString());
+		else if (reqType == httpReqType.DELETE) httpReq = new HttpDelete(this.u.toString());
 		
 		// Set cookies from JS object.
 		this.cs.clear();
@@ -592,24 +715,17 @@ public class httpClient
         for(String key : headers.keySet())
         {
             String val = (String) headers.get(key);
-            if(!post) { httpGet.addHeader(key, val); }
-            else { httpPost.addHeader(key, val); }
+            httpReq.addHeader(key, val);
         }
 		
 		CloseableHttpResponse resp = null;
 		try
 		{	
-			if(!post)
-			{
-				this.buildClient(httpGet);
-				resp = this.cli.execute(httpGet, ctx);
-			}
-			else
-			{
-				this.buildClient(httpPost);
-				if(this.respEnt != null) httpPost.setEntity(this.respEnt);
-				resp = this.cli.execute(httpPost, ctx);
-			}
+			
+			this.buildClient(httpReq);
+			if(reqType == httpReqType.POST && this.respEnt != null) ((HttpPost)httpReq).setEntity(this.respEnt);
+			else if (reqType == httpReqType.PUT && this.respEnt != null) ((HttpPut)httpReq).setEntity(this.respEnt);
+			resp = this.cli.execute(httpReq, ctx);
 			
 			HttpEntity ent = resp.getEntity();
 			
@@ -641,7 +757,7 @@ public class httpClient
 				try { resp.close(); } 
 				catch (IOException e) { }
 			}
-			if(post) this.respEnt = null;
+			if(reqType == httpReqType.POST || reqType == httpReqType.PUT) this.respEnt = null;
 		}
 		
 		return ret;
