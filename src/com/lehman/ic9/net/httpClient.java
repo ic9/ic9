@@ -73,6 +73,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 
@@ -135,6 +137,9 @@ public class httpClient
 	private URL u = null;
 	
 	private HttpEntity respEnt = null;
+	
+	/** TCP no delay. **/
+	private boolean tcpNoDelay = false;
 	
 	/** Allow self signed certificates. */
 	private boolean allowSelfSigned = false;
@@ -386,6 +391,15 @@ public class httpClient
 	/*
 	 * GETTERS
 	 */
+    
+    /**
+     * Gets the flag for TCP no delay. (Nagle's Algorithm)
+     * @return A boolean with true for TCP no delay and false for not.
+     */
+    public boolean getTcpNoDelay() {
+        return this.tcpNoDelay;
+    }
+    
 	/**
 	 * Gets a list of 'cookie' objects set for the client. (See 
 	 * http/cookie.js for details.)
@@ -393,7 +407,7 @@ public class httpClient
 	 * @throws NoSuchMethodException Exception
 	 * @throws ScriptException Exception
 	 */
-	public Object getCookies() throws NoSuchMethodException, ScriptException
+ 	public Object getCookies() throws NoSuchMethodException, ScriptException
 	{
 		Object ret = this.eng.newList();
 		List<Cookie> cookies = this.cs.getCookies();
@@ -508,6 +522,16 @@ public class httpClient
 	/*
 	 * SETTERS
 	 */
+	/**
+     * Sets the flag for TCP no delay. (Nagle's Algorithm) In order for this 
+     * flag to be effective this must be called prior to making the actual 
+     * HTTP request.
+     * @param UseTcpNoDelay is a boolean with true for TCP no delay and 
+     * false for not.
+     */
+	public void setTcpNoDelay(boolean UseTcpNoDelay) {
+	    this.tcpNoDelay = UseTcpNoDelay;
+	}
 	
 	/**
 	 * Sets the credentials to use for basic authentication.
@@ -654,6 +678,11 @@ public class httpClient
 		this.buildAuth(httpGet);
 		
 		this.cli = hcb.build();
+		
+		if (!this.tcpNoDelay) {
+		    HttpParams httpParameters = this.cli.getParams();
+		    HttpConnectionParams.setTcpNoDelay(httpParameters, true);
+        }
 	}
 	
 	/**
@@ -717,12 +746,15 @@ public class httpClient
             String val = (String) headers.get(key);
             httpReq.addHeader(key, val);
         }
-		
+        
 		CloseableHttpResponse resp = null;
 		try
 		{	
-			
-			this.buildClient(httpReq);
+			if (this.cli == null)
+			{
+			    System.out.println("java: building http client.");
+			    this.buildClient(httpReq);
+			}
 			if(reqType == httpReqType.POST && this.respEnt != null) ((HttpPost)httpReq).setEntity(this.respEnt);
 			else if (reqType == httpReqType.PUT && this.respEnt != null) ((HttpPut)httpReq).setEntity(this.respEnt);
 			resp = this.cli.execute(httpReq, ctx);
@@ -759,6 +791,9 @@ public class httpClient
 			}
 			if(reqType == httpReqType.POST || reqType == httpReqType.PUT) this.respEnt = null;
 		}
+		
+		// Release the connection.
+		httpReq.releaseConnection();
 		
 		return ret;
 	}

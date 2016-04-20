@@ -149,7 +149,7 @@ HttpClient.prototype.postString = function (PostTypeStr, Obj, ContentType) {
  * @return A Javascript object with the response.
  */
 HttpClient.prototype.postBinary = function (PostTypeStr, Obj, ContentType) {
-    return this.native.postString(PostTypeStr, Obj, ContentType);
+    return this.native.postBinary(PostTypeStr, Obj, ContentType);
 };
 
 /**
@@ -219,7 +219,7 @@ HttpClient.prototype.putString = function (PostTypeStr, Obj, ContentType) {
  * @return A Javascript object with the response.
  */
 HttpClient.prototype.putBinary = function (PostTypeStr, Obj, ContentType) {
-    return this.native.putString(PostTypeStr, Obj, ContentType);
+    return this.native.putBinary(PostTypeStr, Obj, ContentType);
 };
 
 /**
@@ -248,6 +248,15 @@ HttpClient.prototype.deleteBinary = function () {
 /*
  * GETTERS
  */
+
+/**
+ * Gets the flag for TCP no delay. (Nagle's Algorithm)
+ * @return A boolean with true for TCP no delay and false for not.
+ */
+HttpClient.prototype.getTcpNoDelay = function() {
+    return this.native.getTcpNoDelay();
+};
+
 /**
  * Gets a list of 'cookie' objects set for the client. (See 
  * http/cookie.js for details.)
@@ -342,6 +351,19 @@ HttpClient.prototype.getRelativeRedirectsAllowed = function () {
 /*
  * SETTERS
  */
+
+/**
+ * Sets the flag for TCP no delay. (Nagle's Algorithm) In order for this 
+ * flag to be effective this must be called prior to making the actual 
+ * HTTP request. The default value is false.
+ * @param UseTcpNoDelay is a boolean with true for TCP no delay and 
+ * false for not.
+ * @return Object instance.
+ */
+HttpClient.prototype.setTcpNoDelay = function (UseTcpNoDelay) {
+    this.native.setTcpNoDelay(UseTcpNoDelay);
+    return this;
+};
 
 /**
  * Sets a header key value pair. This is a shortcut to simply 
