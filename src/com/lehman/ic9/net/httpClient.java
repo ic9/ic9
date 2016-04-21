@@ -56,6 +56,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
@@ -677,12 +678,12 @@ public class httpClient
 		
 		this.buildAuth(httpGet);
 		
-		this.cli = hcb.build();
-		
-		if (!this.tcpNoDelay) {
-		    HttpParams httpParameters = this.cli.getParams();
-		    HttpConnectionParams.setTcpNoDelay(httpParameters, true);
+		if (this.tcpNoDelay) {
+            SocketConfig socketConfig = SocketConfig.custom().setTcpNoDelay(true).build();
+            this.hcb.setDefaultSocketConfig(socketConfig);
         }
+		
+		this.cli = hcb.build();
 	}
 	
 	/**
@@ -752,7 +753,6 @@ public class httpClient
 		{	
 			if (this.cli == null)
 			{
-			    System.out.println("java: building http client.");
 			    this.buildClient(httpReq);
 			}
 			if(reqType == httpReqType.POST && this.respEnt != null) ((HttpPost)httpReq).setEntity(this.respEnt);
@@ -773,13 +773,13 @@ public class httpClient
 			
 			EntityUtils.consume(ent);
 		}
-		catch (ClientProtocolException e) { throw new ic9exception("httpClient.get(): Client protocol exception. " + e.getMessage()); }
-		catch (IOException e) { throw new ic9exception("httpClient.get(): IO exception. " + e.getMessage()); }
-		catch (KeyManagementException e) { throw new ic9exception("httpClient.get(): Key management exception. " + e.getMessage()); }
-		catch (NoSuchAlgorithmException e) { throw new ic9exception("httpClient.get(): No such algorithm exception. " + e.getMessage()); }
-		catch (KeyStoreException e) { throw new ic9exception("httpClient.get(): Key store exception. " + e.getMessage()); }
-		catch (AuthenticationException e) { throw new ic9exception("httpClient.get(): Authentication exception. " + e.getMessage()); }
-		catch (Exception e) { throw new ic9exception("httpClient.get(): Unhandled exception. " + e.getMessage()); }
+		catch (ClientProtocolException e) { throw new ic9exception("httpClient.performRequest(): Client protocol exception. " + e.getMessage()); }
+		catch (IOException e) { throw new ic9exception("httpClient.performRequest(): IO exception. " + e.getMessage()); }
+		catch (KeyManagementException e) { throw new ic9exception("httpClient.performRequest(): Key management exception. " + e.getMessage()); }
+		catch (NoSuchAlgorithmException e) { throw new ic9exception("httpClient.performRequest(): No such algorithm exception. " + e.getMessage()); }
+		catch (KeyStoreException e) { throw new ic9exception("httpClient.performRequest(): Key store exception. " + e.getMessage()); }
+		catch (AuthenticationException e) { throw new ic9exception("httpClient.performRequest(): Authentication exception. " + e.getMessage()); }
+		catch (Exception e) { throw new ic9exception("httpClient.performRequest(): Unhandled exception. " + e.getMessage()); }
 		finally
 		{
 			// Reset credentials
