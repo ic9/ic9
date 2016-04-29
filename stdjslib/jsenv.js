@@ -226,6 +226,67 @@ function assertArray(Value) {
     if (!Array.isArray(Value)) { throw ("assertArray(): Assertion exception, not an array."); }
 }
 
+/**
+ * Turns any object or variable into a JSON string representation.
+ * @param Jobj Is a Javascript object to turn into a JSON string.
+ * @param Pretty Is a boolean with true for pretty print and false 
+ * for not. (Optional) (Default is true.)
+ * @param Indent Is an integer with the number of tab indentations 
+ * to start with. This only applies if Pretty === true. (Optional) 
+ * (Default is 0.)
+ */
+function jStringify(Jobj, Pretty, Indent) {
+    var rstr = "", count = 0, key, tstr = "", i, tres;
+    Jobj = setDef(Jobj, {});
+    Pretty = setDef(Pretty, true);
+    Indent = setDef(Indent, 0);
+    if (isArr(Jobj)) {
+      for (i = 0; i < Jobj.length; i += 1) {
+        if (Jobj[i] !== undefined) {
+          if (i > 0) { tstr += ","; }
+          if (Pretty === true && i > 0) { tstr += "\n"; }
+          if (Pretty === true && isArr(Jobj[i]) === false && isObj(Jobj[i]) === false && typeof(Jobj[i]) !== "object") { tstr += jIndent(Indent + 1); }
+          tstr += jStringify(Jobj[i], Pretty, Indent + 1);
+          count += 1;
+        }
+      }
+      if (Pretty === true && count > 0) {
+        rstr += jIndent(Indent) + "[\n";
+        rstr += tstr;
+        if (tstr.trim() !== "") { rstr += "\n"; }
+        rstr += jIndent(Indent) + "]";
+      } else {
+        rstr += "[" + tstr + "]"
+      }
+    } else if (isObj(Jobj) || typeof(Jobj) === "object") {
+      for (key in Jobj) {
+        if (Jobj.hasOwnProperty(key) && Jobj[key] !== undefined) {
+          if (count > 0) { tstr += ","; }
+          if (Pretty === true && count > 0) { tstr += "\n"; }
+          tstr += jIndent(Indent + 1) + "\"" + key + "\":";
+          tres = jStringify(Jobj[key], Pretty, Indent + 1);
+          if (Pretty === true && tres.startsWith("[]") === false && tres.startsWith("{}") === false && (isArr(Jobj[key]) || isObj(Jobj[key]) || typeof(Jobj[key]) === "object")) { tstr += "\n"; }
+          tstr += tres;
+          count += 1;
+        }
+      }
+      if (Pretty === true && count > 0) {
+        rstr += jIndent(Indent) + "{\n";
+        rstr += tstr;
+        if (tstr.trim() !== "") { rstr += "\n"; }
+        rstr += jIndent(Indent) + "}";
+      } else {
+        rstr += "{" + tstr + "}"
+      }
+    } else if (isNumber(Jobj) || isBool(Jobj)) {
+      if (Pretty === true) { jIndent(Indent); }
+      rstr += "" + Jobj;
+    } else {
+      rstr += "\"" + Jobj.escapeJson() + "\"";
+    }
+    return rstr;
+  }
+
 /*
  * Extended native types.
  */
@@ -292,11 +353,8 @@ Object.defineProperty(Object.prototype, 'mixin', {
 Object.defineProperty(Object.prototype, 'toString', {
     value : function (Pretty, ShowMeths) {
         var ret = "", mth;
-        if (Pretty) {
-            ret = JSON.stringify(this, undefined, 3);
-        } else {
-            ret = JSON.stringify(this);
-        }
+        Pretty = setDef(Pretty, true);
+        ret = jStringify(this, Pretty);
         if (ShowMeths) {
             ret += "\n";
             for (mth in this) {
@@ -340,6 +398,26 @@ Object.defineProperty(Object.prototype, 'length', {
 Object.defineProperty(String.prototype, 'contains', {
     value : function (Str) {
         return this.indexOf(Str) !== -1;
+    },
+    writable: true,
+    enumerable: false
+});
+
+/**
+ * Escapes special chars for packaging in a JSON string.
+ * @return A string with escaped characters.
+ */
+Object.defineProperty(String.prototype, 'escapeJson', {
+    value : function () {
+        return this
+        .replace(/[\"]/g, '\\"')
+        .replace(/[\/]/g, '\\/')
+        .replace(/[\b]/g, '\\b')
+        .replace(/[\f]/g, '\\f')
+        .replace(/[\n]/g, '\\n')
+        .replace(/[\r]/g, '\\r')
+        .replace(/[\t]/g, '\\t')
+      ; 
     },
     writable: true,
     enumerable: false
