@@ -285,7 +285,20 @@ function jStringify(Jobj, Pretty, Indent) {
       rstr += "\"" + Jobj.escapeJson() + "\"";
     }
     return rstr;
-  }
+}
+
+/**
+ * Returns a string of tabs with the number equal to the integer 
+ * provided as an argument.
+ * @param Indent Is an integer with the number of tab spaces to indent.
+ * @returns A string with tab characters.
+ */
+function jIndent(Indent) {
+    Indent = setDef(Indent, 0);
+    var istr = "";
+    for (var i = 0; i < Indent; i += 1) { istr += "\t"; }
+    return istr;
+}
 
 /*
  * Extended native types.
