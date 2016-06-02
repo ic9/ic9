@@ -22,9 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+import com.lehman.ic9.ic9engine;
 import com.lehman.ic9.ic9exception;
 
 /**
@@ -210,10 +213,12 @@ public class config
 	 * Gets the full config as a map.
 	 * @return A map with the property value.
 	 * @throws ic9exception if something goes wrong.
+	 * @throws ScriptException 
+	 * @throws NoSuchMethodException 
 	 */
-	public Map<String, String> getConfigMap() throws ic9exception
+	public Map<String, Object> getConfigMap(ic9engine Eng) throws ic9exception, NoSuchMethodException, ScriptException
 	{
-		Map<String, String> ret = new HashMap<String, String>();
+		Map<String, Object> ret = Eng.newObj();
 		
 		if(this.config != null)
 		{

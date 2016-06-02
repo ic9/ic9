@@ -1,12 +1,12 @@
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,8 +41,8 @@ Config.prototype = new BaseObj();
 Config.prototype.load = function (FileName) { this.native.load(FileName); return this; };
 
 /**
- * Gets a property value with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a String with the default value to return or null.
@@ -56,8 +56,8 @@ Config.prototype.get = function (PropertyName, DefaultValue) {
 };
 
 /**
- * Gets a property value as a String with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value as a String with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a String with the default value to return or null.
@@ -71,8 +71,8 @@ Config.prototype.getString = function (PropertyName, DefaultValue) {
 };
 
 /**
- * Gets a property value as a boolean with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value as a boolean with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a boolean with the default value to return or null.
@@ -86,8 +86,8 @@ Config.prototype.getBool = function (PropertyName, DefaultValue) {
 };
 
 /**
- * Gets a property value as a long integer with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value as a long integer with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a long integer with the default value to return or null.
@@ -101,8 +101,8 @@ Config.prototype.getInt = function (PropertyName, DefaultValue) {
 };
 
 /**
- * Gets a property value as a double with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value as a double with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a double with the default value to return or null.
@@ -116,8 +116,8 @@ Config.prototype.getDouble = function (PropertyName, DefaultValue) {
 };
 
 /**
- * Gets a property value as a list with the provided property name. If the provided default value 
- * is not null and an exception occurs, the default value is returned. If the default is 
+ * Gets a property value as a list with the provided property name. If the provided default value
+ * is not null and an exception occurs, the default value is returned. If the default is
  * set to null, then the exception is thrown.
  * @param PropertyName is a String with the property name to find.
  * @param DefaultValue is a list with the default value to return or null.
@@ -141,14 +141,8 @@ Config.prototype.getList = function (PropertyName, DefaultValue) {
  * @return A map with the property value.
  * @throws ic9exception if something goes wrong.
  */
-Config.prototype.getMap = function () {
-    var tmap = this.native.getMap(), tmapkeys = tmap.keySet(), ret = {}, i, key, val;
-    for (i = 0; i < tmapkeys.size(); i += 1) {
-        key = tmapkeys.get(i);
-        val = tmap.get(key);
-        ret[key] = val;
-    }
-    return ret;
+Config.prototype.getConfigMap = function () {
+    return this.native.getConfigMap(getEngine());
 };
 
 Config.prototype.constructor = Config;
