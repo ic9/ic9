@@ -237,10 +237,14 @@ function assertArray(Value) {
  */
 function jStringify(Jobj, Pretty, Indent) {
     var rstr = "", count = 0, key, tstr = "", i, tres;
-    Jobj = setDef(Jobj, {});
+    //Jobj = setDef(Jobj, {});
+    Jobj = setDef(Jobj, null);
     Pretty = setDef(Pretty, true);
     Indent = setDef(Indent, 0);
-    if (isArr(Jobj)) {
+    if (Jobj === null) {
+        if (Pretty === true) { jIndent(Indent); }
+        rstr += "null";
+    } else if (isArr(Jobj)) {
       for (i = 0; i < Jobj.length; i += 1) {
         if (Jobj[i] !== undefined) {
           if (i > 0) { tstr += ","; }
@@ -265,7 +269,7 @@ function jStringify(Jobj, Pretty, Indent) {
           if (Pretty === true && count > 0) { tstr += "\n"; }
           tstr += jIndent(Indent + 1) + "\"" + key + "\":";
           tres = jStringify(Jobj[key], Pretty, Indent + 1);
-          if (Pretty === true && tres.startsWith("[]") === false && tres.startsWith("{}") === false && (isArr(Jobj[key]) || isObj(Jobj[key]) || typeof(Jobj[key]) === "object")) { tstr += "\n"; }
+          if (Pretty === true && startsWith(tres, "[]") === false && startsWith(tres, "{}") === false && (isArr(Jobj[key]) || ((isObj(Jobj[key]) || typeof(Jobj[key]) === "object") && Jobj[key] !== null))) { tstr += "\n"; }
           tstr += tres;
           count += 1;
         }
@@ -285,6 +289,16 @@ function jStringify(Jobj, Pretty, Indent) {
       rstr += "\"" + Jobj.escapeJson() + "\"";
     }
     return rstr;
+}
+
+/**
+ * Parses the JSON string and returns a Javascript object.
+ * @param Str Is a JSON encoded string.
+ * @returns A plain old Javascript object.
+ */
+function jParse(Str) {
+    var robj = JSON.parse(Str);
+    return robj;
 }
 
 /**
