@@ -74,7 +74,8 @@ public class ic9Main
 						jarLoader.getInstance().loadJarsInPathRecursively(sys.getAssemblyPath() + "lib", debug);
 						
 						// Create the Ic9 engine and eval the script.
-						ic9engine eng = new ic9engine();
+						String[] engArgs = {"-scripting"};
+						ic9engine eng = new ic9engine(engArgs);
 						eng.setMainArgs(script, scriptArgs);
 						
 						// Remove shebang if it exists.
