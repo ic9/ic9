@@ -60,8 +60,9 @@ public class udpPacket {
     
     /**
      * Sets the address the packet is to be sent.
-     * @param Packet is a DatagramPacket object.
+     * @param pack is a DatagramPacket object.
      * @param Address is a String with the address to set.
+     * @throws UnknownHostException Exception
      */
     public static void setAddress(DatagramPacket pack, String Address) throws UnknownHostException {
         pack.setAddress(InetAddress.getByName(Address));
@@ -69,7 +70,7 @@ public class udpPacket {
     
     /**
      * Sets the port number of the remote host to send the packet to.
-     * @param Packet is a DatagramPacket object.
+     * @param pack is a DatagramPacket object.
      * @param Port is an integer with the remote port number.
      */
     public static void setPort(DatagramPacket pack, int Port) {
@@ -79,7 +80,7 @@ public class udpPacket {
     /**
      * Sets the remote endpoint address and port that the packet 
      * is to be sent to.
-     * @param Packet is a DatagramPacket object.
+     * @param pack is a DatagramPacket object.
      * @param Address is a String with the remote address.
      * @param Port is an integer with the remote port number.
      */
@@ -89,7 +90,7 @@ public class udpPacket {
     
     /**
      * Sets the byte data to be sent in the packet.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @param Data is a byte array with the data.
      * @param Offset is an integer with the offset the data starts at.
      */
@@ -99,7 +100,7 @@ public class udpPacket {
     
     /**
      * Sets the packets contents with the provided string.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @param Str is a string with the packet contents.
      */
     public static void setString(DatagramPacket pack, String Str) {
@@ -108,7 +109,7 @@ public class udpPacket {
     
     /**
      * Gets the packet remote address.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @return A string with the remote address.
      */
     public static String getAddress(DatagramPacket pack) {
@@ -119,7 +120,7 @@ public class udpPacket {
     
     /**
      * Gets the packet remote port number.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @return An integer with the remote port number.
      */
     public static int getPort(DatagramPacket pack) {
@@ -128,7 +129,7 @@ public class udpPacket {
     
     /**
      * Gets the offset of the data to be sent or received.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @return An integer with the offset.
      */
     public static int getOffset(DatagramPacket pack) {
@@ -137,7 +138,7 @@ public class udpPacket {
     
     /**
      * Gets the packet data as a byte array.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @return A byte array with the data.
      */
     public static byte[] getData(DatagramPacket pack) {
@@ -146,7 +147,7 @@ public class udpPacket {
     
     /**
      * Gets the package data as a string.
-     * @param Packet is a Java DatagramPacket object.
+     * @param pack is a Java DatagramPacket object.
      * @return A string with the packets data.
      */
     public static String getString(DatagramPacket pack) {
