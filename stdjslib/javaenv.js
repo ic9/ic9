@@ -75,8 +75,6 @@ function newJsObject(ObjName) {
         } catch (e) {
             throw ("newJsObject(): Instantiation of '" + ObjName + "' failed. " + e);
         }
-    } else {
-    	obj = new BaseObj();
     }
     return obj;
 }
@@ -310,5 +308,13 @@ var sys = {
         Envs = setDef(Envs, []);
         Dir = setDef(Dir, "");
         return sys.native.exec(getEngine(), OsCommands, Envs, Dir);
+    },
+    
+    /**
+     * Gets the IC9 version string.
+     * @return A string with the IC9 version.
+     */
+    version: function () {
+        return getEngine().getVersion();
     },
 };

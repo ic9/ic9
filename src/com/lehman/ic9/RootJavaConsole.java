@@ -68,8 +68,10 @@ public class RootJavaConsole
 	 * this object.
 	 * @param Eng is an instance of the ic9engine object.
 	 * @throws ic9exception Exception
+	 * @throws ScriptException Exception
+	 * @throws NoSuchMethodException Exception
 	 */
-	protected RootJavaConsole(ic9engine Eng) throws ic9exception
+	protected RootJavaConsole(ic9engine Eng) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		this.eng = Eng;
 		
@@ -104,10 +106,10 @@ public class RootJavaConsole
 		try { Class.forName(ansiClassName); this.useSystem = false; } 
 		catch(ClassNotFoundException e) { this.useSystem = true; }
 		
-		if(!useSystem)
+		if(!this.useSystem)
 		{
-			AnsiConsole.systemInstall();
-			this.an = ansi(builder);
+            AnsiConsole.systemInstall();
+            this.an = ansi(builder);
 		}
 		else
 			System.out.println("Warning: Couldn't locate " + ansiClassName + " class for console, using System.out instead.");
@@ -121,8 +123,10 @@ public class RootJavaConsole
 	 * @param Eng is an ic9engine object to set the console.
 	 * @return A RootJavaConsole object.
 	 * @throws ic9exception Exception
+	 * @throws ScriptException Exception
+	 * @throws NoSuchMethodException Exception
 	 */
-	public static RootJavaConsole getInstance(ic9engine Eng) throws ic9exception
+	public static RootJavaConsole getInstance(ic9engine Eng) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 		if(instance == null)
 		{

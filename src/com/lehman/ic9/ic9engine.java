@@ -41,7 +41,13 @@ public class ic9engine
 	private NashornScriptEngineFactory fact = new NashornScriptEngineFactory();
 	private ScriptEngine eng = null;
 	
-	public ic9engine() throws ScriptException, ic9exception
+	/**
+	 * Default constructor.
+	 * @throws ScriptException Script exception.
+     * @throws ic9exception Propagates exception from call to init().
+     * @throws NoSuchMethodException Exception
+	 */
+	public ic9engine() throws ScriptException, ic9exception, NoSuchMethodException
 	{
 		this(new String[0]);
 	}
@@ -52,9 +58,10 @@ public class ic9engine
 	 * @param Args is an array of String objects to add to the 
 	 * getScriptEngine call.
 	 * @throws ScriptException Script exception.
-	 * @throws ic9exception Propogates exception from call to init().
+	 * @throws ic9exception Propagates exception from call to init().
+	 * @throws NoSuchMethodException Exception
 	 */
-	public ic9engine(String[] Args) throws ScriptException, ic9exception
+	public ic9engine(String[] Args) throws ScriptException, ic9exception, NoSuchMethodException
 	{
 		// Setup env.
 		this.env = new environment(this);
@@ -69,8 +76,9 @@ public class ic9engine
 	 * standard includes.
 	 * @throws ScriptException Script exception.
 	 * @throws ic9exception Throws exception if failure when calling include or obtaining the root java console.
+	 * @throws NoSuchMethodException 
 	 */
-	private void init() throws ScriptException, ic9exception
+	private void init() throws ScriptException, ic9exception, NoSuchMethodException
 	{
     	this.eng.put("Env", this.env);
     	this.env.include("jsenv.js");			// Javascript base. Independent of ic9 environment.

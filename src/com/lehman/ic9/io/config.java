@@ -211,10 +211,11 @@ public class config
 
 	/**
 	 * Gets the full config as a map.
+	 * @param Eng is an instance of ic9engine.
 	 * @return A map with the property value.
 	 * @throws ic9exception if something goes wrong.
-	 * @throws ScriptException 
-	 * @throws NoSuchMethodException 
+	 * @throws ScriptException Exception
+	 * @throws NoSuchMethodException Exception
 	 */
 	public Map<String, Object> getConfigMap(ic9engine Eng) throws ic9exception, NoSuchMethodException, ScriptException
 	{

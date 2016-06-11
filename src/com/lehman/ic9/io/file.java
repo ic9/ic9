@@ -28,6 +28,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import javax.script.ScriptException;
 
@@ -266,7 +270,9 @@ public class file
 	}
 	
 	/**
-	 * Deletes the provided file or directory provided.
+	 * Deletes the file or directory provided. Not if a directory is provided 
+	 * and has any contents this call will fail. To delete a directory with 
+	 * all of it's contents use rmdir instead.
 	 * @param FileName is a String with the file or directory to delete.
 	 * @throws ic9exception Exception
 	 */
@@ -274,7 +280,36 @@ public class file
 	{
 		File f = new File(FileName);
 		if(!f.delete())
-			throw new ic9exception("file.unlink(): Couldn't find provided path '" + FileName + "'.");
+			throw new ic9exception("file.unlink(): Failed to delete '" + FileName + "'.");
+	}
+	
+	/**
+	 * Deletes the provided directory and all contents and sub directories.
+	 * @param DirName is a String with the directory to delete.
+	 * @throws ic9exception Exception
+	 */
+	public static void rmdir(String DirName) throws ic9exception
+	{
+	    File d = new File(DirName);
+	    if (d.exists() && d.isDirectory()) {
+	        deleteDir(d);
+	    } else {
+	        throw new ic9exception("file.rmdir(): Either provided directory '" + DirName + "' doesn't exist or isn't a directory.");
+	    }
+	}
+	
+	/**
+	 * Helper that recursively deletes directories.
+	 * @param file is a File object to delete.
+	 */
+	public static void deleteDir(File file) {
+	    File[] contents = file.listFiles();
+	    if (contents != null) {
+	        for (File f : contents) {
+	            deleteDir(f);
+	        }
+	    }
+	    file.delete();
 	}
 	
 	/**
@@ -397,5 +432,16 @@ public class file
 	{
 		byte[] data = file.inStreamToBuffer(is);
 		return new String(data, "UTF-8");
+	}
+	
+	/**
+	 * Moves a source file or directory to the destination file or directory. This 
+	 * method will replace existing files within the destination directory if present.
+	 * @param Src is a String with the source path to move from.
+	 * @param Dest is a String with the destination path to move to.
+	 * @throws IOException Exception
+	 */
+	public static void mv(String Src, String Dest) throws IOException {
+	    Files.move(Paths.get(Src), Paths.get(Dest), StandardCopyOption.REPLACE_EXISTING);
 	}
 }

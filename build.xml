@@ -158,6 +158,7 @@
 	
 	<target name="jar" depends="ic9-jar, copy-lib-depends, copy-stdjslib, copy-jslib, copy-tests, copy-examples, java-doc, js-doc">
 		<copy file="${basedir}/ic9" toFile="${dist.dir}/ic9" />
+		<copy file="${basedir}/ipm" toFile="${dist.dir}/ipm" />
 		<copy file="${basedir}/ic9.bat" toFile="${dist.dir}/ic9.bat" />
 		<copy file="${basedir}/LICENSE" toFile="${dist.dir}/LICENSE" />
 		<copy file="${basedir}/NOTICE" toFile="${dist.dir}/NOTICE" />
@@ -165,6 +166,7 @@
 		
 		<!-- Set file permissions. -->
 		<chmod file="${dist.dir}/ic9" perm="755"/>
+		<chmod file="${dist.dir}/ipm" perm="755"/>
 	</target>
 	
 	<target name="main" depends="compile, jar">

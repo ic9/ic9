@@ -148,9 +148,18 @@ var file = {
     },
 
     /**
+     * Deletes the provided directory and all contents and sub directories.
+     * @param DirName is a String with the directory to delete.
+     * @throws ic9exception Exception
+     */
+    rmdir : function (DirName) {
+        file.native.rmdir(DirName);
+        return this;
+    },
+
+    /**
      * Lists the directory contents of the provided directory name and 
      * returns them as a JS list of strings.
-     * @param eng is the instance of the ic9engine.
      * @param FileName is a String with the directory.
      * @return An Object which is a new JS list with the directory file names.
      */
@@ -206,5 +215,16 @@ var file = {
      */
     inStreamToString : function (Is) {
         return file.native.inStreamToString(Is);
+    },
+    
+    /**
+     * Moves a source file or directory to the destination file or directory. This 
+     * method will replace existing files within the destination directory if present.
+     * @param Src is a string with the source path to move from.
+     * @param Dest is a string with the destination path to move to.
+     */
+    mv : function (Src, Dest) {
+        file.native.mv(Src, Dest);
+        return this;
     },
 };

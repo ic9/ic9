@@ -32,6 +32,11 @@ import com.lehman.ic9.sys.sys;
  */
 public class ic9Main
 {
+    // Disalbe commons.logging!
+    static {
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+     }
+    
 	/** The script file to execute. */
 	private static String script = null;
 	
@@ -156,6 +161,12 @@ public class ic9Main
 		return isOpt;
 	}
 	
+	/**
+	 * Runs Ic9 in interactive shell mode.
+	 * @throws ic9exception Exception
+	 * @throws ScriptException Exception
+	 * @throws NoSuchMethodException Exception
+	 */
 	public static void runInteractive() throws ic9exception, ScriptException, NoSuchMethodException
 	{
 		// Load dependent jars in assemblyPath/lib-depends directory.
@@ -164,6 +175,7 @@ public class ic9Main
 		// Create the Ic9 engine and eval the script.
 		String[] engArgs = {"-scripting"};
 		ic9engine eng = new ic9engine(engArgs);
+		eng.setMainArgs("interactive", new ArrayList<String>());
 		eng.getEnv().include("Ic9sh.js");
 		@SuppressWarnings("unchecked")
 		Map<String, Object> shl = (Map<String, Object>) eng.invokeFunction("newIc9sh");

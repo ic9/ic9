@@ -19,6 +19,9 @@ package com.lehman.ic9;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import javax.script.ScriptException;
 
 import com.lehman.ic9.io.file;
 import com.lehman.ic9.sys.sys;
@@ -47,16 +50,21 @@ public class environment
 	 * include method checks the following locations for the included 
 	 * file name.
 	 * <br><br>
+     * current_path/
+     * <br>
+     * current_path/.ipm (packages)
+     * <br>
 	 * assembly_path/stdjslib
 	 * <br>
 	 * assembly_path/jslib
 	 * <br>
-	 * current_path/
 	 * 
 	 * @param FileName is a String with the file name to include.
 	 * @throws ic9exception File not found.
+	 * @throws ScriptException Exception
+	 * @throws NoSuchMethodException Exception
 	 */
-	public void include(String FileName) throws ic9exception
+	public void include(String FileName) throws ic9exception, NoSuchMethodException, ScriptException
 	{
 	    // Check to see if it hasn't already been included.
 	    if(!this.includes.contains(FileName))
@@ -65,10 +73,20 @@ public class environment
     		 * Check to see if include exists within the stdlib path 
     		 * in the assembly path.
     		 */
+	        String currentFile = sys.getCurrentPath() + sys.seperator() + FileName;
+	        String localIpmPath = sys.getCurrentPath() + sys.seperator() + ".ipm";
     		String stdJsLib = sys.getAssemblyPath() + "stdjslib/" + FileName;
     		String jsLib = sys.getAssemblyPath() + "jslib/" + FileName;
-    		String currentFile = sys.getCurrentPath() + sys.seperator() + FileName;
-    		if(file.exists(stdJsLib))
+    		
+    		if(file.exists(currentFile))
+            {
+                this.eng.eval(FileName, file.read(currentFile));
+                this.includes.add(FileName);
+            }
+    		else if (this.foundInLocalIpm(localIpmPath, FileName)) {
+    		    // Nothing to do as it's already included.
+    		}
+    		else if(file.exists(stdJsLib))
     		{
     			this.eng.eval(FileName, file.read(stdJsLib));
     			this.includes.add(FileName);
@@ -78,16 +96,47 @@ public class environment
     			this.eng.eval(FileName, file.read(jsLib));
     			this.includes.add(FileName);
     		}
-    		else if(file.exists(currentFile))
-    		{
-    			this.eng.eval(FileName, file.read(currentFile));
-    			this.includes.add(FileName);
-    		}
     		else
     		{
     			throw new ic9exception("environment.include(): Couldn't find included file '" + FileName + "'.");
     		}
 	    }
+	}
+	
+	/**
+	 * Checks the local .ipm directory, parses the installed.json file and loops through the 
+	 * installed packages looking for the include file. If found it loads it, adds it to the 
+	 * includes list and then returns true. Otherwise it returns false.
+	 * @param localIpmPath Is a String with the local .ipm directory path.
+	 * @param IncludeFile Is a String with the file that needs to be included.
+	 * @return A boolean with true if the file was found and included and false if not.
+	 * @throws NoSuchMethodException Exception
+	 * @throws ScriptException Exception
+	 * @throws ic9exception Exception
+	 */
+	public boolean foundInLocalIpm(String localIpmPath, String IncludeFile) throws NoSuchMethodException, ScriptException, ic9exception {
+	    boolean found = false;
+	    
+	    // Don't try to look for anything until jsenv.js has been included.
+	    if (this.includes.contains("jsenv.js")) {
+    	    String installFile = localIpmPath + "/installed.json";
+    	    if (file.exists(installFile) && !file.isDir(installFile)) {
+    	        // Read installed.json and loop through all packages folders for file.
+    	        @SuppressWarnings("unchecked")
+                Map<String, Object> lst = (Map<String, Object>) this.eng.invokeFunction("jParse", file.read(installFile));
+    	        for (String dirName : lst.keySet()) {
+    	            String testFile = localIpmPath + "/" + dirName + "/" + IncludeFile;
+    	                if (file.exists(testFile) && file.isFile(testFile)) {
+    	                    this.eng.eval(testFile, file.read(testFile));
+    	                    this.includes.add(IncludeFile);
+    	                    found = true;
+    	                    break;
+    	                }
+    	        }
+            }
+	    }
+	    
+	    return found;
 	}
 	
 	/**
