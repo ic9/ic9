@@ -8,5 +8,6 @@ for %%b in (%*) do (
 	if not !tmp!==a!arg! ( set "xargs=!xargs! !arg!" ) else ( set "nargs=!nargs! !arg!" )
 )
 :whilerun
-java -jar %xargs% "%~dp0\ic9-*.jar" %nargs%
+FOR /f "tokens=*" %%G IN ('dir /b %~dp0\ic9-*.jar') DO set jpath=%~dp0\%%G
+java -jar %xargs% "%jpath%" %nargs%
 IF %ERRORLEVEL% EQU 2 GOTO whilerun
