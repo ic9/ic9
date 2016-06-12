@@ -563,4 +563,15 @@ public class RootJavaConsole
 			throw new ic9exception("RootJavaConsole.JsPrintError(): Couldn't find 'console' object in script engine." + e);
 		}
 	}
+	
+	/**
+	 * Sets the useSystem variable. If useSystem equals true then JANSI
+	 * terminal codes are disabled and standard system.out functions are used.
+	 * This should be set to true for console environments that can't handle 
+	 * special features. 
+	 * @param UseSystem is a boolean with true for use system and false for not.
+	 */
+	public void setUseSystem(boolean UseSystem) {
+	    this.useSystem = UseSystem;
+	}
 }

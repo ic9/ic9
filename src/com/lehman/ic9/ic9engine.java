@@ -24,6 +24,8 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import com.lehman.ic9.sys.sys;
+
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 /**
@@ -40,6 +42,9 @@ public class ic9engine
 	
 	private NashornScriptEngineFactory fact = new NashornScriptEngineFactory();
 	private ScriptEngine eng = null;
+	
+	// Is it a *nix environment. If windows, a check is done for $SHELL.
+	private boolean isNixEnv = true;
 	
 	/**
 	 * Default constructor.
@@ -84,9 +89,17 @@ public class ic9engine
     	this.env.include("jsenv.js");			// Javascript base. Independent of ic9 environment.
     	this.env.include("javaenv.js");			// Java base. With Java and ic9 specific methods/objects.
     	
+    	if (sys.getOsName().toLowerCase().contains("windows")) {
+    	    Map<String, Object> ret = sys.exec(this, "echo $SHELL", null, null);
+    	    if (ret.containsKey("stdout") && ((String)ret.get("stdout")).trim().equals("$SHELL")) {
+    	        this.isNixEnv = false;
+    	    }
+    	}
+    	
     	// Setup console ...
     	@SuppressWarnings("unused")
 		RootJavaConsole rjc = RootJavaConsole.getInstance(this);
+    	if (!this.isNixEnv) rjc.setUseSystem(true);
 	}
 	
 	/**
