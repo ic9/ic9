@@ -90,10 +90,8 @@ public class ic9engine
     	this.env.include("javaenv.js");			// Java base. With Java and ic9 specific methods/objects.
     	
     	if (sys.getOsName().toLowerCase().contains("windows")) {
-    	    Map<String, Object> ret = sys.exec(this, "echo $SHELL", null, "");
-    	    if (ret.containsKey("stdout") && ((String)ret.get("stdout")).trim().equals("$SHELL")) {
-    	        this.isNixEnv = false;
-    	    }
+    	    Map<String, Object> tenv = (Map<String, Object>) this.eng.get("$ENV");
+    	    if (!tenv.containsKey("SHELL")) { this.isNixEnv = false; }
     	}
     	
     	// Setup console ...
