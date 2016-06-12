@@ -89,6 +89,8 @@ public class ic9engine
     	this.env.include("jsenv.js");			// Javascript base. Independent of ic9 environment.
     	this.env.include("javaenv.js");			// Java base. With Java and ic9 specific methods/objects.
     	
+    	// Check for winders cmd.exe environment. If found set isNixEnv to false. This 
+    	// should still show true for mingw/msys.
     	if (sys.getOsName().toLowerCase().contains("windows")) {
     	    Map<String, Object> tenv = (Map<String, Object>) this.eng.get("$ENV");
     	    if (!tenv.containsKey("SHELL")) { this.isNixEnv = false; }
