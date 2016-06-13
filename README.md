@@ -47,7 +47,7 @@ built and placed in the 'dist/doc' folder.
 Create a symlinks to ic9 and ipm shell scripts.
 ```
 $> sudo ln -s <path-to-ic9-dir>/dist/bin/ic9 /usr/bin/ic9
-$> sudo ln -s <path-to-ic9-dir>/dist/bin/ipm /usr/bin/ic9
+$> sudo ln -s <path-to-ic9-dir>/dist/bin/ipm /usr/bin/ipm
 ```
 
 **Winders:**
