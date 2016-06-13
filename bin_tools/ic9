@@ -22,7 +22,8 @@ case "$OSTYPE" in
 		SPATH=`dirname ${SCRIPT}`
 	;;
 esac
-IC9PATH="${SPATH}/ic9-*.jar"
+PARENT="$(dirname "$SPATH")"
+IC9PATH="${PARENT}/ic9.jar"
 
 # process arguments to extract java system options
 ji=0 ai=0 jopts=() args=()

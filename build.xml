@@ -2,7 +2,6 @@
 <project name="ic9" default="main" basedir=".">
     <!-- Added -Dbuild.compiler=javac1.7 to ant build as workaround. Upgrading ant would be long term solution -->
 	<!-- Set variables. Accessed by ${} -->
-	<property name="version" value="0.5" />
 	<property name="java.source" value="1.7" />
 	<property name="java.target" value="1.7" />
 	<property name="src.dir" location="src" />
@@ -66,7 +65,7 @@
 	<!--Creates the deployable jar file  -->
 	<target name="ic9-jar" depends="compile">
 	    
-	    <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/ic9-${version}.jar">
+	    <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/ic9.jar">
 			<classpath>
 			    <fileset dir="${dist.dir}" includes="*.jar"/>
 				<fileset dir="${dist.dir}/lib" includes="*.jar"/>
@@ -74,7 +73,7 @@
 			</classpath>
 		</manifestclasspath>
 	    
-		<jar destfile="${dist.dir}/ic9-${version}.jar">
+		<jar destfile="${dist.dir}/ic9.jar">
 		    <fileset dir="${build.dir}">
 		        <include name="com/lehman/ic9/*.class" />
 		        <include name="com/lehman/ic9/common/*.class" />
@@ -157,16 +156,18 @@
 	</target>
 	
 	<target name="jar" depends="ic9-jar, copy-lib-depends, copy-stdjslib, copy-jslib, copy-tests, copy-examples, java-doc, js-doc">
-		<copy file="${basedir}/ic9" toFile="${dist.dir}/ic9" />
-		<copy file="${basedir}/ipm" toFile="${dist.dir}/ipm" />
-		<copy file="${basedir}/ic9.bat" toFile="${dist.dir}/ic9.bat" />
+		<copy file="${basedir}/bin_tools/ic9" toFile="${dist.dir}/bin/ic9" />
+		<copy file="${basedir}/bin_tools/ipm" toFile="${dist.dir}/bin/ipm" />
+		<copy file="${basedir}/bin_tools/ic9.bat" toFile="${dist.dir}/bin/ic9.bat" />
+		<copy file="${basedir}/bin_tools/ipm.bat" toFile="${dist.dir}/bin/ipm.bat" />
+		<copy file="${basedir}/ipm.js" toFile="${dist.dir}/ipm.js" />
 		<copy file="${basedir}/LICENSE" toFile="${dist.dir}/LICENSE" />
 		<copy file="${basedir}/NOTICE" toFile="${dist.dir}/NOTICE" />
 		<copy file="${basedir}/README.md" toFile="${dist.dir}/README.md" />
 		
 		<!-- Set file permissions. -->
-		<chmod file="${dist.dir}/ic9" perm="755"/>
-		<chmod file="${dist.dir}/ipm" perm="755"/>
+		<chmod file="${dist.dir}/bin/ic9" perm="755"/>
+		<chmod file="${dist.dir}/bin/ipm" perm="755"/>
 	</target>
 	
 	<target name="main" depends="compile, jar">

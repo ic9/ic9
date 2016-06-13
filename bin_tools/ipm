@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Get path to Ic9 root dir.
+case "$OSTYPE" in
+    darwin*)  
+        pushd . > /dev/null
+        SPATH="${BASH_SOURCE[0]}";
+          while([ -h "${SCRIPT_PATH}" ]) do 
+            cd "`dirname "${SPATH}"`"
+            SPATH="$(readlink "`basename "${SPATH}"`")"; 
+          done
+        cd "`dirname "${SPATH}"`" > /dev/null
+        SPATH="`pwd`";
+        popd  > /dev/null
+    ;; 
+    linux*)
+        SCRIPT=$( readlink -m $( type -p $0 ))
+        SPATH=`dirname ${SCRIPT}`
+    ;;
+    *)
+        SCRIPT=$( readlink -m $( type -p $0 ))
+        SPATH=`dirname ${SCRIPT}`
+    ;;
+esac
+PARENT="$(dirname "$SPATH")"
+IPMFILE="${PARENT}/ipm.js"
+ic9 "$IPMFILE" "$@"
