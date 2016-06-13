@@ -36,7 +36,7 @@ import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 public class ic9engine
 {
 	/** ic9 version. */
-	public static String version = "0.5";
+	public static String version = "0.8.0";
 	
 	private environment env = null;
 	
