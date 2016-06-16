@@ -1,12 +1,12 @@
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ $ic9env = true;
 $ic9 = {};
 
 /**
- * Sets a default value where none is set already. This 
+ * Sets a default value where none is set already. This
  * is useful in functions with optional parameters.
  * @param Variable is a var to check.
  * @param Value is the default value for the variable.
@@ -44,11 +44,11 @@ function setDef(Variable, Value) {
 }
 
 /**
- * Checks to see if the passed variable is defined. This 
+ * Checks to see if the passed variable is defined. This
  * is useful when requiring function parameters.
  * @param Variable is a variable to check.
  * @returns A boolean with true for defined and false
- * for undefined. 
+ * for undefined.
  */
 function isDef(Variable) {
     if (Variable === undefined) { return false; }
@@ -58,7 +58,7 @@ function isDef(Variable) {
 /**
  * Wrapper to check if a var is an array.
  * @param Variable is the var to check.
- * @returns A boolean with true if it's an array 
+ * @returns A boolean with true if it's an array
  * and false if not.
  */
 function isArr(Variable) {
@@ -134,7 +134,7 @@ function isFunct(Value) {
 }
 
 /**
- * Base object is a minimal ic9 object with a check to ensure current scope 
+ * Base object is a minimal ic9 object with a check to ensure current scope
  * isn't global and with a jstr method.
  * @constructor
  */
@@ -229,10 +229,10 @@ function assertArray(Value) {
 /**
  * Turns any object or variable into a JSON string representation.
  * @param Jobj Is a Javascript object to turn into a JSON string.
- * @param Pretty Is a boolean with true for pretty print and false 
+ * @param Pretty Is a boolean with true for pretty print and false
  * for not. (Optional) (Default is true.)
- * @param Indent Is an integer with the number of tab indentations 
- * to start with. This only applies if Pretty === true. (Optional) 
+ * @param Indent Is an integer with the number of tab indentations
+ * to start with. This only applies if Pretty === true. (Optional)
  * (Default is 0.)
  */
 function jStringify(Jobj, Pretty, Indent) {
@@ -302,7 +302,7 @@ function jParse(Str) {
 }
 
 /**
- * Returns a string of tabs with the number equal to the integer 
+ * Returns a string of tabs with the number equal to the integer
  * provided as an argument.
  * @param Indent Is an integer with the number of tab spaces to indent.
  * @returns A string with tab characters.
@@ -319,7 +319,7 @@ function jIndent(Indent) {
  */
 
 /**
- * Shortcut for defining new member methods for any object. This 
+ * Shortcut for defining new member methods for any object. This
  * will add the function to the prototype.
  * <br><br>
  * Standard way:
@@ -336,7 +336,7 @@ Function.prototype.p = function (MemberName, FunctionInstance) {
 };
 
 /**
- * Add object contains method. This method works for both JS objects 
+ * Add object contains method. This method works for both JS objects
  * and arrays.
  * @param Needle is the item to check for.
  * @return A boolean with true for contains and false for not.
@@ -351,7 +351,7 @@ Object.defineProperty(Object.prototype, 'contains', {
 });
 
 /**
- * Mixin method takes the source object and 
+ * Mixin method takes the source object and
  * combines it into the current object.
  * @param Source is the source object to mix in.
  * @return Object instance.
@@ -398,8 +398,8 @@ Object.defineProperty(Object.prototype, 'jstr', {
 /*jslint forin:false */
 
 /**
- * Gets the number of properties in the object. This 
- * method uses hasOwnProperty to filter for just 
+ * Gets the number of properties in the object. This
+ * method uses hasOwnProperty to filter for just
  * the properties.
  * @return An int with the number of properties.
  */
@@ -444,15 +444,15 @@ Object.defineProperty(String.prototype, 'escapeJson', {
         .replace(/[\n]/g, '\\n')
         .replace(/[\r]/g, '\\r')
         .replace(/[\t]/g, '\\t')
-      ; 
+      ;
     },
     writable: true,
     enumerable: false
 });
 
 /**
- * Gets the item at the specified index. This 
- * can be used from Java as an accessor to get 
+ * Gets the item at the specified index. This
+ * can be used from Java as an accessor to get
  * an item at the index.
  * @param Index is the index to get the item at.
  * @return A Javascript object at the index.
@@ -463,6 +463,7 @@ Array.prototype.get = function (Index) {
 
 /**
  * Generic JS exception.
+ * @constructor
  * @param Message is a string with the exception message.
  * @param Name is a string with the exception name. (Optional)
  */
@@ -473,4 +474,3 @@ function Exception(Message, Name) {
 }
 Exception.prototype = new BaseObj();
 Exception.prototype.constructor = Exception;
-

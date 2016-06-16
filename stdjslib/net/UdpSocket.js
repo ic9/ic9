@@ -1,12 +1,12 @@
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,46 +15,47 @@
  */
 
 /**
- * udpPacket singleton provides methods for manipulating a 
+ * udpPacket singleton provides methods for manipulating a
  * datagram packet.
+ * @constructor
  */
 var udpPacket = {
     /**
-     * Get reference to native java object and 
+     * Get reference to native java object and
      * store as native.
      */
     native : Java.type("com.lehman.ic9.net.udpPacket"),
-    
+
     /**
      * Creates a new UDP packet with the provided length in bytes.
      * @param Length is an integer with the length in bytes to create.
-     * @return A Java DatagramPacket object. 
+     * @return A Java DatagramPacket object.
      */
     create: function (Length) {
         if (!isDef(Length) || !isNumber(Length)) { throw ("udpPacket.create(): Integer argument Length is required."); }
         return udpPacket.native.create(Length);
     },
-    
+
     /**
      * Creates a new UDP packet from the provided string.
      * @param Str is a string to set.
-     * @return A Java DatagramPacket object. 
+     * @return A Java DatagramPacket object.
      */
     createFromString: function (Str) {
         if (!isDef(Str)) { throw ("udpPacket.createFromString(): String argument Str is required."); }
         return udpPacket.native.createFromString(Str);
     },
-    
+
     /**
      * Creates a new UDP packet from the provided byte array.
      * @param Data is a byte array to set.
-     * @return A Java DatagramPacket object. 
+     * @return A Java DatagramPacket object.
      */
     createFromBytes: function (Data) {
         if (!isDef(Data)) { throw ("udpPacket.createFromBytes(): ByteArray argument Data is required."); }
         return udpPacket.native.createFromBytes(Data);
     },
-    
+
     /**
      * Sets the address the packet is to be sent.
      * @param Packet is a Java DatagramPacket object.
@@ -65,7 +66,7 @@ var udpPacket = {
         if (!isDef(Address)) { throw ("udpPacket.setAddress(): String argument Address is required."); }
         udpPacket.native.setAddress(Packet, Address);
     },
-    
+
     /**
      * Sets the port number of the remote host to send the packet to.
      * @param Packet is a Java DatagramPacket object.
@@ -76,9 +77,9 @@ var udpPacket = {
         if (!isDef(Port)) { throw ("udpPacket.setPort(): Int argument Port is required."); }
         udpPacket.native.setPort(Packet, Port);
     },
-    
+
     /**
-     * Sets the remote endpoint address and port that the packet 
+     * Sets the remote endpoint address and port that the packet
      * is to be sent to.
      * @param Packet is a Java DatagramPacket object.
      * @param Address is a string with the remote address.
@@ -90,7 +91,7 @@ var udpPacket = {
         if (!isDef(Port)) { throw ("udpPacket.setEndpoint(): Int argument Port is required."); }
         udpPacket.native.setEndpoint(Packet, Address, Port);
     },
-    
+
     /**
      * Sets the byte data to be sent in the packet.
      * @param Packet is a Java DatagramPacket object.
@@ -103,7 +104,7 @@ var udpPacket = {
         if (!isDef(Offset)) { throw ("udpPacket.setData(): Int argument Offset is required."); }
         udpPacket.native.setData(Packet, Data, Offset);
     },
-    
+
     /**
      * Sets the packets contents with the provided string.
      * @param Packet is a Java DatagramPacket object.
@@ -114,7 +115,7 @@ var udpPacket = {
         if (!isDef(Str)) { throw ("udpPacket.setString(): String argument Str is required."); }
         udpPacket.native.setString(Packet, Str);
     },
-    
+
     /**
      * Gets the packet remote address.
      * @param Packet is a Java DatagramPacket object.
@@ -124,7 +125,7 @@ var udpPacket = {
         if (!isDef(Packet)) { throw ("udpPacket.getAddress(): DatagramPacket argument Packet is required."); }
         return udpPacket.native.getAddress(Packet);
     },
-    
+
     /**
      * Gets the packet remote port number.
      * @param Packet is a Java DatagramPacket object.
@@ -134,7 +135,7 @@ var udpPacket = {
         if (!isDef(Packet)) { throw ("udpPacket.getPort(): DatagramPacket argument Packet is required."); }
         return udpPacket.native.getPort(Packet);
     },
-    
+
     /**
      * Gets the offset of the data to be sent or received.
      * @param Packet is a Java DatagramPacket object.
@@ -144,7 +145,7 @@ var udpPacket = {
         if (!isDef(Packet)) { throw ("udpPacket.getOffset(): DatagramPacket argument Packet is required."); }
         return udpPacket.native.getOffset(Packet);
     },
-    
+
     /**
      * Gets the packet data as a byte array.
      * @param Packet is a Java DatagramPacket object.
@@ -154,7 +155,7 @@ var udpPacket = {
         if (!isDef(Packet)) { throw ("udpPacket.getData(): DatagramPacket argument Packet is required."); }
         return udpPacket.native.getData(Packet);
     },
-    
+
     /**
      * Gets the package data as a string.
      * @param Packet is a Java DatagramPacket object.
@@ -168,6 +169,7 @@ var udpPacket = {
 
 /**
  * Default constructor.
+ * @constructor
  */
 function UdpSocket () {
     BaseObj.call(this);
@@ -178,7 +180,7 @@ function UdpSocket () {
 UdpSocket.prototype = new BaseObj();
 
 /**
- * Binds the datagram socket to the specified address and port on 
+ * Binds the datagram socket to the specified address and port on
  * the local system.
  * @param Host is a string with the address to bind to.
  * @param Port is an integer with the port number to bind to.
@@ -267,7 +269,7 @@ UdpSocket.prototype.setRxTimeout = function (TimeoutMills) {
 };
 
 /**
- * Sets the DSCP and ECN bits with the provided integer. (0-255) 
+ * Sets the DSCP and ECN bits with the provided integer. (0-255)
  * @param TrafficClassByte is an integer with the traffic class.
  * @return this
  */

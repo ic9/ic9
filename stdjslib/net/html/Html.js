@@ -1,12 +1,12 @@
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,10 @@
 /*global isDef, BaseObj */
 
 /**
- * Defines nodes that don't have a separate 
- * closing tag and children. Used by Html() to 
+ * Defines nodes that don't have a separate
+ * closing tag and children. Used by Html() to
  * check if a node is a value node.
+ * @namespace
  */
 var valueNodes = [
     "area",
@@ -32,14 +33,14 @@ var valueNodes = [
 ];
 
 /**
- * HTML object facilitates construction of a HTML node  
- * tree. Constructor expects a spec object to be passed 
+ * HTML object facilitates construction of a HTML node
+ * tree. Constructor expects a spec object to be passed
  * in with at least the htype set to a HTML node type.
  * <br><br>
  * Example:
  * <br>
  * var nd = html({ htype: "div", "id": "my_div" });
- * 
+ *
  * @constructor
  */
 function Html(spec) {
@@ -81,7 +82,7 @@ Html.prototype.add = function (Child) {
 };
 
 /**
- * Adds the provided text string as a new HTML text 
+ * Adds the provided text string as a new HTML text
  * node to the current node. (Appended to children.)
  * @param Str is a string to add.
  * @return The object instance.
@@ -93,7 +94,7 @@ Html.prototype.addText = function (Str) {
 };
 
 /**
- * Sets a key/value pair as a HTML attribute 
+ * Sets a key/value pair as a HTML attribute
  * and stors within the attr object.
  * @param Key is a string with the attribute key.
  * @param Val is a string with the attribute value.
@@ -106,7 +107,7 @@ Html.prototype.set = function (Key, Val) {
 };
 
 /**
- * Creates a new BR HTML tag object and adds it 
+ * Creates a new BR HTML tag object and adds it
  * to the current object. (Append to children.)
  * @return The object instance.
  */
@@ -117,7 +118,7 @@ Html.prototype.br = function () {
 };
 
 /**
- * Builds a HTML string from the current node and all child 
+ * Builds a HTML string from the current node and all child
  * nodes recursivly and returns the HTML string.
  * @return A string with the HTML content.
  */

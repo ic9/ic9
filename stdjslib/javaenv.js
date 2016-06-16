@@ -1,12 +1,12 @@
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ function include(IncFile) {
 }
 
 /**
- * Dynamically loads a Java JAR file with the supplied JAR 
+ * Dynamically loads a Java JAR file with the supplied JAR
  * file name.
  * @param JarFileName is a String with the JAR file name to load.
  */
@@ -36,10 +36,10 @@ function loadJar(JarFile) {
 }
 
 /**
- * Loads all Java JAR files within the provided path. If recursive 
+ * Loads all Java JAR files within the provided path. If recursive
  * is true then it will load all JAR files within sub directories as well.
  * @param JarPath is a String with the path to search for JAR files.
- * @param Recursive is a boolean with true for recursive and false for not. 
+ * @param Recursive is a boolean with true for recursive and false for not.
  * (Optional, default is false.)
  */
 function loadJarsInPath(JarPath, Recursive) {
@@ -61,7 +61,7 @@ function getEngine() {
 function newJsList() { return []; }
 
 /**
- * Instantiates a new object. If a name is provided, then 
+ * Instantiates a new object. If a name is provided, then
  * a new object defined in the global namespace is created.
  * Otherwise a generic object is created.
  * @param ObjName is a String with the name of the object to instantiate or null.
@@ -89,7 +89,7 @@ function newDate(TimeMills) {
 }
 
 /**
- * Creates a new Javascript Buffer object 
+ * Creates a new Javascript Buffer object
  * and returns it.
  * @returns A new Javascript Buffer object.
  */
@@ -111,16 +111,17 @@ function toJavaList(NativeList) { return Java.to(NativeList, 'java.lang.Object[]
 var ByteArray = Java.type("byte[]");
 
 /**
- * Define ByteBuffer java object to use for binary 
+ * Define ByteBuffer java object to use for binary
  * operations.
+ * @constructor
  */
 var ByteBuffer = Java.type("java.nio.ByteBuffer");
 
 /**
- * Buffer object used for managing binary data. Buffer 
+ * Buffer object used for managing binary data. Buffer
  * holds a ByteArray object which is a Java byte[].
  * @constructor
- * @param NumBytes is a integer with the number of bytes to 
+ * @param NumBytes is a integer with the number of bytes to
  * size the buffer. (Default is 1024)
  */
 function Buffer(NumBytes) {
@@ -141,19 +142,19 @@ Buffer.prototype.constructor = Buffer;
 
 
 /**
- * Sigleton sys instance implements various system related 
+ * Sigleton sys instance implements various system related
  * methods.
  * @constructor
  */
 var sys = {
     /**
-     * Get reference to native java object and 
+     * Get reference to native java object and
      * store as native.
      */
     native : Java.type("com.lehman.ic9.sys.sys"),
 
     /**
-     * Gets a string with various system information. It includes 
+     * Gets a string with various system information. It includes
      * OS, Java and Path information in a human readable format.
      * @return A string with a variety of system information.
      */
@@ -244,14 +245,14 @@ var sys = {
     getJavaClassPath : function () { return sys.native.getJavaClassPath(); },
 
     /**
-     * Immediately exists the application with the 
+     * Immediately exists the application with the
      * provided exit code.
      * @param Code is an int with the exit code.
      */
     exit : function (Code) { sys.native.exit(setDef(Code, 0)); },
 
     /**
-     * Causes the current thread to sleep for the provided 
+     * Causes the current thread to sleep for the provided
      * number of milliseconds.
      * @param Mills is a long integer with number of milliseconds to sleep.
      * @throws InterruptedException
@@ -263,22 +264,22 @@ var sys = {
     },
 
     /**
-     * Gets the current time as a long integer as the number of 
+     * Gets the current time as a long integer as the number of
      * milliseconds since epoch.
      * @return A long integer with milliseconds since epoch.
      */
     getMills : function () { return sys.native.getMills(); },
 
     /**
-     * Prints the provided object to standard output. Standard 
-     * output is piped to console.print method in the first 
+     * Prints the provided object to standard output. Standard
+     * output is piped to console.print method in the first
      * ic9engine script engine.
      * @param toprint is an Object which toString will be called on.
      */
     print : function (Str) { sys.native.print(Str); return sys; },
 
     /**
-     * Prints the provided object to standard output with a new line 
+     * Prints the provided object to standard output with a new line
      * character at the end. Standard output is piped to console.println
      * method in the first ic9engine script engine.
      * @param toprint is an Object which toString will be called on.
@@ -286,7 +287,7 @@ var sys = {
     println : function (Str) { sys.native.println(Str); return sys; },
 
     /**
-     * Reads a line from standard input which is by default 
+     * Reads a line from standard input which is by default
      * the console.
      * @return A String with the captured line from standard input.
      * @throws IOException
@@ -297,11 +298,11 @@ var sys = {
      * Executes an OS command like one would do from the OS shell.
      * @param OsCommands is either a string with commands to run or an Array of strings with
      * the first string being the command to run and the rest being arguments. (Required)
-     * @param Envs is a list of strings of environment variables to apply when running the 
+     * @param Envs is a list of strings of environment variables to apply when running the
      * command in 'key=value' pairs. (Optional)
      * @param Dir is a starting directory to run the command in. (Optional)
-     * @return An object with 'exitValue' which is an integer, 'stdout' with 
-     * standard output text if any and 'stderr' with standard error 
+     * @return An object with 'exitValue' which is an integer, 'stdout' with
+     * standard output text if any and 'stderr' with standard error
      * text if any.
      */
     exec : function (OsCommands, Envs, Dir) {
@@ -309,7 +310,7 @@ var sys = {
         Dir = setDef(Dir, "");
         return sys.native.exec(getEngine(), OsCommands, Envs, Dir);
     },
-    
+
     /**
      * Gets the IC9 version string.
      * @return A string with the IC9 version.

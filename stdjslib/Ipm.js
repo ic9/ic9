@@ -5,13 +5,13 @@ include ("io/Git.js");
 
 /*
  * Copyright 2016 Austin Lehman
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,14 @@ include ("io/Git.js");
 
 /**
  * IC9 package manager object.
+ * @constructor
  */
 function Ipm() {
     BaseObj.call(this);
     this.getopt = undefined;
     this.args = undefined;
     this.opts = undefined;
-    
+
     // Installed packages. (.ipm/installed.json)
     this.installed = {};
 }
@@ -42,7 +43,7 @@ Ipm.prototype.runCli = function (Args) {
     this.getopt = new Getopt(this.getOptConfig());
     try {
         this.opts = this.getopt.parse(this.args.slice(2));
-        
+
         if (this.runCliOpts() === false) {
             this.showUsage();
         }
@@ -53,15 +54,15 @@ Ipm.prototype.runCli = function (Args) {
 };
 
 /**
- * Checks to see which options have been provided and 
+ * Checks to see which options have been provided and
  * runs them.
  */
 Ipm.prototype.runCliOpts = function () {
     var valid = false;
-    
+
     // debugging ...
     //console.log(this.opts);
-    
+
     if (isDef(this.opts.options.version) && this.opts.options.version === true) {
         console.log("IC9 v" + sys.version());
         valid = true;
@@ -82,7 +83,7 @@ Ipm.prototype.runCliOpts = function () {
         this.listLocalPackages();
         valid = true;
     }
-    
+
     return valid;
 };
 
@@ -94,10 +95,10 @@ Ipm.prototype.showUsage = function () {
     this.getopt.setHelp(
         "Usage: ipm [options]\n" +
         "IC9 package manager.\n" +
-        "Copyright 2016 Austin Lehman\n" + 
-        "Licensed under the Apache License, Version 2.0\n" + 
+        "Copyright 2016 Austin Lehman\n" +
+        "Licensed under the Apache License, Version 2.0\n" +
         "\n" +
-        "Options:\n" + 
+        "Options:\n" +
         "[[OPTIONS]]\n" +
         "\n"
     );
@@ -120,8 +121,8 @@ Ipm.prototype.getOptConfig = function () {
 };
 
 /**
- * Runs the init new package function. This creates a new ipm.json 
- * file in the current directory with the blank template if it 
+ * Runs the init new package function. This creates a new ipm.json
+ * file in the current directory with the blank template if it
  * doesn't already exist.
  */
 Ipm.prototype.initPackage = function () {
@@ -165,7 +166,7 @@ Ipm.prototype.installPackage = function () {
         if (!pkgUrl.toLowerCase().startsWith("https://")) {
             throw ("Install options only supports HTTPS.");
         }
-        
+
         // Check for or create .ipm directory.
         this.checkIpmDir();
         // Clone repo into temp dir.
@@ -188,9 +189,9 @@ Ipm.prototype.installPackage = function () {
             this.installed[pkgObj.name] = installInfo;
             // Save installed.
             this.saveInstalled();
-            
+
             // TODO: There is probably quite a bit more to do here!
-            
+
             console.info("Successfully installed package '" + pkgObj.name + "'.");
         } else {
             console.info("Package '" + pkgObj.name + "' is already installed locally.");
@@ -229,10 +230,10 @@ Ipm.prototype.listLocalPackages = function () {
  */
 
 /**
- * Checks the .ipm directory to see if it exists, if not 
+ * Checks the .ipm directory to see if it exists, if not
  * it creates it.
  */
-Ipm.prototype.checkIpmDir = function () { 
+Ipm.prototype.checkIpmDir = function () {
     if (!file.exists(".ipm")) {
         console.info("No .ipm directory found, creating it now.");
         file.mkdir(".ipm");
@@ -242,8 +243,8 @@ Ipm.prototype.checkIpmDir = function () {
 };
 
 /**
- * Clones a remote HTTPS GIT repo with the provided 
- * URL to a new local temp directory and returns the 
+ * Clones a remote HTTPS GIT repo with the provided
+ * URL to a new local temp directory and returns the
  * new directory name.
  * @param pkgUrl is a string with the GIT repo URL.
  * @return A string with the newly created temp directory.
@@ -257,7 +258,7 @@ Ipm.prototype.cloneRemoteToTemp = function (pkgUrl) {
 };
 
 /**
- * Looks for the ipm.json file within the provided directory 
+ * Looks for the ipm.json file within the provided directory
  * name and if found it parses it and returns it as a JS object.
  * @param tdir is a string with the directory to look for the ipm.json file.
  * @return A JS object with the package object.
@@ -274,7 +275,7 @@ Ipm.prototype.getPackageDefinition = function (tdir) {
 };
 
 /**
- * Does basic validation of required parameters and data types 
+ * Does basic validation of required parameters and data types
  * for the provided package object.
  * @param pkgObj is the package JS object.
  */
@@ -296,7 +297,7 @@ Ipm.prototype.validatePackageDefinition = function (pkgObj) {
 };
 
 /**
- * Moves the temp GIT repo directory to a new directory with 
+ * Moves the temp GIT repo directory to a new directory with
  * the package name.
  * @param pkgObj is the package JS object.
  * @param tdir is a string with the temp directory name.
@@ -310,7 +311,7 @@ Ipm.prototype.installFromTempDir = function (pkgObj, tdir) {
 };
 
 /**
- * Loads the contents of the local .ipm/installed.json into 
+ * Loads the contents of the local .ipm/installed.json into
  * memory.
  */
 Ipm.prototype.loadInstalled = function () {
