@@ -149,7 +149,7 @@ Ipm.prototype.initPackage = function () {
             tests: [],                  // List of unit test files for package.
             build: ""                   // Script that runs the build.
         };
-        file.write("ipm.json", pkg.toString());
+        file.write("ipm.json", pkg.jstr());
     } else {
         console.warn("File ipm.json already exists in current directory, not creating.");
     }
@@ -324,7 +324,7 @@ Ipm.prototype.loadInstalled = function () {
  */
 Ipm.prototype.saveInstalled = function () {
     if (file.exists(".ipm") && file.isDir(".ipm")) {
-        file.write(".ipm/installed.json", this.installed.toString());
+        file.write(".ipm/installed.json", this.installed.jstr());
     } else {
         throw ("Failed to save file '.ipm/installed.json', directory .ipm doesn't exist or isn't a directory.");
     }

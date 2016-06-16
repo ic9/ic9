@@ -60,3 +60,8 @@ should be able to use Ic9 from within MSYS/Git Bash or from within cmd.exe.
 
 # Contribute
 I'd be happy to have others working on the project as well.
+
+# Release Notes
+### 0.8.1
+* The default object.toString() method has been replaced with object.jstr() to avoid
+conflicts with the default Javascript toString() functions.

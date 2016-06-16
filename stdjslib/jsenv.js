@@ -135,7 +135,7 @@ function isFunct(Value) {
 
 /**
  * Base object is a minimal ic9 object with a check to ensure current scope 
- * isn't global and with a toString method.
+ * isn't global and with a jstr method.
  * @constructor
  */
 function BaseObj() {
@@ -377,7 +377,7 @@ Object.defineProperty(Object.prototype, 'mixin', {
  * @param ShowMeths is a boolean with true for show methods and false for not.
  * @return A string of the object in JSON format.
  */
-Object.defineProperty(Object.prototype, 'toString', {
+Object.defineProperty(Object.prototype, 'jstr', {
     value : function (Pretty, ShowMeths) {
         var ret = "", mth;
         Pretty = setDef(Pretty, true);

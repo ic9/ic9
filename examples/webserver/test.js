@@ -76,7 +76,7 @@ TestServer.prototype.handle = function (req, res)
 	        
 			// No script found, just print the request info.
 			res.println("Request Info:");
-			res.println(req.toString(true));
+			res.println(req.jstr(true));
 			res.println("Content:");
 			res.println(req.getContent());
 	    }

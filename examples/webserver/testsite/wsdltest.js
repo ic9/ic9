@@ -54,7 +54,7 @@ function handle(req, res)
 	        
 	        var wsreq = wsInt.parseRequest(req.headers.SOAPAction, content);
 	        console.log("parsed request: ");
-	        console.log(wsreq.toString(true));
+	        console.log(wsreq.jstr(true));
 	        
 	        // Build response.
 	        var ret = wsInt.createResponse(req.headers.SOAPAction, { callResponse: { success: true, error: "" } });

@@ -113,7 +113,7 @@ Ic9sh.prototype.printWelcome = function () {
 Ic9sh.prototype.printRet = function (ret) {
     if (isDef(ret) && ret !== null) {
         if (isObj(ret) && isDef(ret.toString)) {
-            console.println(ret.toString(true, true));
+            console.println(ret.jstr(true, true));
         } else {
             console.println(ret);
         }
