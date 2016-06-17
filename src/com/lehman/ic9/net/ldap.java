@@ -91,6 +91,7 @@ public class ldap
 		
 		this.env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		this.env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port);
+		this.env.put(Context.REFERRAL, "follow");
 		if(this.userName.contains("\\"))
 		{
 			this.env.put(Context.SECURITY_PRINCIPAL, this.userName);
