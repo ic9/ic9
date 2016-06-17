@@ -145,7 +145,7 @@ public class environment
 	 * @param JarFileName is a String with the JAR file name to load.
 	 * @throws Exception Exception
 	 */
-	public void loadJar(String JarFileName) throws Exception
+	public void includeJar(String JarFileName) throws Exception
 	{
 		jarLoader.getInstance().loadJar(JarFileName);
 	}
@@ -157,7 +157,7 @@ public class environment
 	 * @param Recursive is a boolean with true for recursive and false for not.
 	 * @throws ic9exception Exception
 	 */
-	public void loadJarsInPath(String JarPath, boolean Recursive) throws ic9exception
+	public void includeJarsInPath(String JarPath, boolean Recursive) throws ic9exception
 	{
 		if(Recursive) { jarLoader.getInstance().loadJarsInPathRecursively(JarPath, false); }
 		else { jarLoader.getInstance().loadJarsInPath(JarPath, false); }

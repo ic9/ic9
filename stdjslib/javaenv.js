@@ -31,8 +31,8 @@ function include(IncFile) {
  * file name.
  * @param JarFileName is a String with the JAR file name to load.
  */
-function loadJar(JarFile) {
-    Env.loadJar(JarFile);
+function includeJar(JarFile) {
+    Env.includeJar(JarFile);
 }
 
 /**
@@ -42,9 +42,9 @@ function loadJar(JarFile) {
  * @param Recursive is a boolean with true for recursive and false for not.
  * (Optional, default is false.)
  */
-function loadJarsInPath(JarPath, Recursive) {
+function includeJarsInPath(JarPath, Recursive) {
     Recursive = setDef(Recursive, false);
-    Env.loadJarsInPath(JarPath, Recursive);
+    Env.includeJarsInPath(JarPath, Recursive);
 }
 
 /**
