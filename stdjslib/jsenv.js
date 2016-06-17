@@ -398,16 +398,14 @@ Object.defineProperty(Object.prototype, 'jstr', {
 /*jslint forin:false */
 
 /**
- * Gets the number of properties in the object. This
- * method uses hasOwnProperty to filter for just
- * the properties.
+ * Gets the number of properties in the object.
  * @return An int with the number of properties.
  */
 Object.defineProperty(Object.prototype, 'length', {
     value : function () {
         var cnt = 0, key;
         for (key in this) {
-            if (this.hasOwnProperty(key)) {
+            if (isFunct(this[key]) === false) {
                 cnt += 1;
             }
         }
