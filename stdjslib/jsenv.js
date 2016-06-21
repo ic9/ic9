@@ -264,7 +264,7 @@ function jStringify(Jobj, Pretty, Indent) {
       }
     } else if (isObj(Jobj) || typeof(Jobj) === "object") {
       for (key in Jobj) {
-        if (Jobj.hasOwnProperty(key) && Jobj[key] !== undefined) {
+        if (Jobj.hasOwnProperty(key) && Jobj[key] !== undefined && !isFunct(Jobj[key])) {
           if (count > 0) { tstr += ","; }
           if (Pretty === true && count > 0) { tstr += "\n"; }
           tstr += jIndent(Indent + 1) + "\"" + key + "\":";
@@ -285,7 +285,7 @@ function jStringify(Jobj, Pretty, Indent) {
     } else if (isNumber(Jobj) || isBool(Jobj)) {
       if (Pretty === true) { jIndent(Indent); }
       rstr += "" + Jobj;
-    } else {
+    } else if (isFunct(Jobj.escapeJson)) {
       rstr += "\"" + Jobj.escapeJson() + "\"";
     }
     return rstr;
