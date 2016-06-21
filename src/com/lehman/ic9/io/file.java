@@ -365,6 +365,30 @@ public class file
 	}
 	
 	/**
+	 * Creates a new directory with the provided directory name and any 
+	 * necessary sub directories.
+	 * @param PathName Is a String with the new directory to make.
+	 * @throws ic9exception Exception
+	 */
+	public static void mkdirs(String PathName) throws ic9exception
+	{
+	    File f = new File(PathName);
+	    if (!f.mkdirs())
+	        throw new ic9exception("file.mkdirs(): Failed to create directory path '" + PathName + ".");
+	}
+	
+	/**
+	 * Gets the parent directory with the provided path.
+	 * @param PathName Is a String with the path to get the 
+	 * parent directory for.
+	 * @return A String with the parent directory.
+	 */
+	public static String getParent (String PathName) {
+	    File f = new File(PathName);
+	    return f.getParentFile().getName();
+	}
+	
+	/**
 	 * Copies the source file to the destination file with the provided 
 	 * file names.
 	 * @param SrcFileName is a String with the source file.

@@ -148,7 +148,8 @@ Ipm.prototype.initPackage = function () {
             dependencies: [],           // List of dependencies.
             devDependencies: [],        // List of dev/test dependencies.
             tests: [],                  // List of unit test files for package.
-            build: ""                   // Script that runs the build.
+            build: "",                  // Script that runs the build.
+            install: {}                 // Install copy instructions.
         };
         file.write("ipm.json", pkg.jstr());
     } else {
@@ -180,6 +181,14 @@ Ipm.prototype.installPackage = function () {
         if (!this.installed.contains(pkgObj.name)) {
             // Install the package from the temp dir.
             var pkgDir = this.installFromTempDir(pkgObj, tdir);
+
+            // Build should be ran here.
+
+            // Run install instructions.
+            if (isDef(pkgObj.install)) {
+
+            }
+
             var installInfo = {
                 type: "git-remote",
                 location: pkgUrl,
@@ -294,6 +303,15 @@ Ipm.prototype.validatePackageDefinition = function (pkgObj) {
     if (isDef(pkgObj.keyWords) && !isArr(pkgObj.keyWords)) { throw ("Package definition validation error. Param keyWords isn't an array."); }
     if (isDef(pkgObj.dependencies) && !isArr(pkgObj.dependencies)) { throw ("Package definition validation error. Param dependencies isn't an array."); }
     if (isDef(pkgObj.devDependencies) && !isArr(pkgObj.devDependencies)) { throw ("Package definition validation error. Param devDependencies isn't an array."); }
+    // Install
+    if (isDef(pkgObj.install) && !isObj(pkgObj.install)) { throw ("Package definition validation error. Param install isn't an object."); }
+    if (isDef(pkgObj.install)) {
+      if (isDef(pkgObj.install.files) && !isArr(pkgObj.install.files)) { throw ("Package definition validation error. Param install.files isn't an array."); }
+      for (var i = 0; i < pkgObj.install.files.length; i += 1) {
+        var f = pkgObj.install.files[i];
+        if (!isString(f)) { throw ("Package definition validation error. Param install.files[" + i + "] isn't a string."); }
+      }
+    }
 };
 
 /**
@@ -329,6 +347,26 @@ Ipm.prototype.saveInstalled = function () {
     } else {
         throw ("Failed to save file '.ipm/installed.json', directory .ipm doesn't exist or isn't a directory.");
     }
+};
+
+Ipm.prototype.runInstallInstructions = function (pkgObj, pkgDir) {
+  if (isDef(pkgObj.install.files)) {
+    for (var ToCopy in pkgObj.install.files) {
+      if (file.exists(pkgDir + "/" + ToCopy)) {
+
+      } else {
+        throw ("Ipm.runInstallInstructions(): Cannot find file '" + pkgDir + "/" + ToCopy + "'.");
+      }
+    }
+  }
+};
+
+Ipm.prototype.copyPath = function (srcPath, destPath) {
+  if (file.exists(srcPath)) {
+    
+  } else {
+    throw ("Ipm.copyPath(): Cannot find source path '" + srcPath + "'.");
+  }
 };
 
 Ipm.prototype.constructor = Ipm;

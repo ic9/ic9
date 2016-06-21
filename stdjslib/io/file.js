@@ -188,6 +188,27 @@ var file = {
     },
 
     /**
+     * Creates a new directory with the provided directory name and any 
+     * necessary sub directories.
+     * @param PathName Is a string with the new directory to make.
+     * @return this
+     */
+    mkdirs : function (PathName) {
+        file.native.mkdirs(PathName);
+        return this;
+    },
+    
+    /**
+     * Gets the parent directory with the provided path.
+     * @param PathName Is a string with the path to get the 
+     * parent directory for.
+     * @return A string with the parent directory.
+     */
+    getParent : function (PathName) {
+        return file.native.getParent(PathName);
+    },
+    
+    /**
      * Copies the source file to the destination file with the provided 
      * file names.
      * @param SrcFileName is a String with the source file.
