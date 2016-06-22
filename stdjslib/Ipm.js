@@ -381,7 +381,7 @@ Ipm.prototype.runInstallInstructions = function (pkgObj, pkgDir) {
 Ipm.prototype.copyPath = function (srcPath, destPath) {
   if (file.exists(srcPath)) {
     if (file.isDir(srcPath)) {
-      file.mkdirs(destPath);
+      if (!file.exists(destPath)) { file.mkdirs(destPath); }
       var srcFiles = file.listDir(srcPath);
       for (var i = 0; i < srcFiles.length; i += 1) {
         var fname = srcFiles[i];
