@@ -182,7 +182,10 @@ Ipm.prototype.installPackage = function () {
             // Install the package from the temp dir.
             var pkgDir = this.installFromTempDir(pkgObj, tdir);
 
-            // Build should be ran here.
+            // Run build script.
+            if (isDef(pkgObj.build)) {
+                this.runBuildScript(pkgObj, pkgDir);
+            }
 
             // Run install instructions.
             if (isDef(pkgObj.install)) {
@@ -346,6 +349,32 @@ Ipm.prototype.saveInstalled = function () {
         file.write(".ipm" + sys.separator() + "installed.json", this.installed.jstr());
     } else {
         throw ("Failed to save file '.ipm" + sys.separator() + "installed.json', directory .ipm doesn't exist or isn't a directory.");
+    }
+};
+
+Ipm.prototype.runBuildScript = function (pkgObj, pkgDir) {
+    if (isDef(pkgObj.build) && pkgObj.build.trim() !== "") {
+        console.info("Running build script '" + pkgObj.build.trim() + "'.");
+            
+        var scriptFile = pkgDir + sys.separator() + pkgObj.build.trim();
+        if (file.exists(scriptFile)) {
+            try {
+                ret = sys.exec(['ic9', pkgObj.build.trim()], {}, pkgDir);
+                if (ret.stdout.trim() !== "") {
+                    console.log(ret.stdout);
+                }
+                if (ret.stderr.trim() !== "") {
+                    console.error(ret.stderr);
+                }
+                if (ret.exitValue !== 0) {
+                    throw ("Ipm.runBuildScript(): Build script returned non-0.");
+                }
+            } catch (e) {
+                throw ("[" + TargetName + "] Error! Compilation failure for '" + Directory + "/" + dcontents[i] + "'. " + e);
+            }
+        } else {
+            throw ("Ipm.runBuildScript(): Cannot find build script '" + scriptFile + "'.");
+        }
     }
 };
 
