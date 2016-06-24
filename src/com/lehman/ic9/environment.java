@@ -141,14 +141,75 @@ public class environment
 	
 	/**
 	 * Dynamically loads a Java JAR file with the supplied JAR 
-	 * file name.
+	 * file name. The include method checks the following locations 
+	 * for the included JAR file name.
+     * <br><br>
+     * current_path/
+     * <br>
+     * current_path/.ipm (packages)
+     * <br>
+     * assembly_path/lib
+     * <br>
+	 * 
 	 * @param JarFileName is a String with the JAR file name to load.
 	 * @throws Exception Exception
 	 */
 	public void includeJar(String JarFileName) throws Exception
 	{
-		jarLoader.getInstance().loadJar(JarFileName);
+	    String currentFile = sys.getCurrentPath() + sys.seperator() + JarFileName;
+        String localIpmPath = sys.getCurrentPath() + sys.seperator() + ".ipm";
+        String assemblyLib = sys.getAssemblyPath() + "lib/" + JarFileName;
+	    
+        if(file.exists(currentFile))
+        {
+            jarLoader.getInstance().loadJar(currentFile);
+        }
+        else if (this.jarFoundInLocalIpm(localIpmPath, JarFileName)) {
+            // Nothing to do as it's already included.
+        }
+        else if(file.exists(assemblyLib))
+        {
+            jarLoader.getInstance().loadJar(currentFile);
+        }
+        else if (file.exists(JarFileName)) // Must be an absolute path.
+        {
+            jarLoader.getInstance().loadJar(JarFileName);
+        }
+        else
+        {
+            throw new ic9exception("environment.includeJar(): Couldn't find included JAR file '" + JarFileName + "'.");
+        }
 	}
+	
+	/**
+     * Checks the local .ipm directory, parses the installed.json file and loops through the 
+     * installed packages looking for the include JAR file. If found it loads it and then 
+     * returns true. Otherwise it returns false.
+     * @param localIpmPath Is a String with the local .ipm directory path.
+     * @param IncludeFile Is a String with the JAR file that needs to be included.
+     * @return A boolean with true if the JAR file was found and included and false if not.
+	 * @throws Exception Exception
+     */
+	public boolean jarFoundInLocalIpm(String localIpmPath, String IncludeFile) throws Exception {
+        boolean found = false;
+        
+        String installFile = localIpmPath + "/installed.json";
+        if (file.exists(installFile) && !file.isDir(installFile)) {
+            // Read installed.json and loop through all packages folders for file.
+            @SuppressWarnings("unchecked")
+            Map<String, Object> lst = (Map<String, Object>) this.eng.invokeFunction("jParse", file.read(installFile));
+            for (String dirName : lst.keySet()) {
+                String testFile = localIpmPath + "/" + dirName + "/" + IncludeFile;
+                if (file.exists(testFile) && file.isFile(testFile)) {
+                    jarLoader.getInstance().loadJar(testFile);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        
+        return found;
+    }
 	
 	/**
 	 * Loads all Java JAR files within the provided path. If recursive 
