@@ -323,7 +323,7 @@ public class sys
 		if(Envs != null)
 		{
 			Map<String, Object> jenvs = (Map<String, Object>) Envs;
-			long envlen = (Long)jenvs.get("length");
+			double envlen = (double)Eng.invokeMethod(jenvs, "length");
 			envs = new String[(int) envlen];
 			for(int i = 0; i < envlen; i++)
 			{
