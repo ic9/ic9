@@ -43,6 +43,10 @@ function Javac(Options) {
   // Search directories recursively for source files.
   this.recursively = false;
 
+  // Class paths is a list of class paths to use with the compile.
+  // ['path/to/some/file.jar'] ...
+  this.classPath = [];
+  
   // Extend base object.
   Target.call(this, Options);
 }
@@ -78,22 +82,39 @@ Javac.prototype.compileDir = function (TargetName, Directory) {
     for (i = 0; i < dcontents.length; i += 1) {
       if (!file.isDir(dir + "/" + dcontents[i]) && dcontents[i].match(this.filePattern) !== null) {
         cmds = [this.ccmd];
+        if (this.classPath.length > 0) {
+            var cpl = this.classPath;
+            cpl.unshift(".");
+            cmds.push("-classpath");
+            if (sys.getOsName().toLowerCase().contains("window")) {
+                cmds.push(cpl.join(";"));
+            } else {
+                cmds.push(cpl.join(":"));
+            }
+        }
         if (isDef(this.destDir)) {
           cmds.push("-d");
           cmds.push(this.destDir);
         }
         console.log("[" + TargetName + "] Compiling '" + Directory + "/" + dcontents[i] + "'.");
         cmds.push(this.srcDir + "/" + dcontents[i]);
-        ret = sys.exec(cmds, {}, this.baseDir);
-        if (ret.stdout.trim() !== "") {
-          console.log(ret.stdout);
+        try {
+            ret = sys.exec(cmds, {}, this.baseDir);
+            if (ret.stdout.trim() !== "") {
+                console.log(ret.stdout);
+            }
+            if (ret.stderr.trim() !== "") {
+                console.error(ret.stderr);
+            }
+            if (ret.exitValue !== 0) {
+                console.log("Compilation failure in directory '" + this.baseDir + "'. Cmds: " + cmds.join(" "));
+                throw ("[" + TargetName + "] Error! Compilation failure for '" + Directory + "/" + dcontents[i] + "'.");
+            }
+        } catch (e) {
+            console.log("Compilation failure in directory '" + this.baseDir + "'. Cmds: " + cmds.join(" "));
+            throw ("[" + TargetName + "] Error! Compilation failure for '" + Directory + "/" + dcontents[i] + "'. " + e);
         }
-        if (ret.stderr.trim() !== "") {
-          console.error(ret.stderr);
-        }
-        if (ret.exitValue !== 0) {
-          throw ("[" + TargetName + "] Error! Compilation failure for '" + Directory + "/" + dcontents[i] + "'.");
-        }
+        
       }
     }
   } else {
@@ -123,8 +144,15 @@ function Jar(Options) {
   // Executable JAR main class.
   this.mainClass = undefined;
 
-  // Base source directory. This should normally be the src/ directory.
-  this.baseDir = "src";
+  // Base directory for jar file.
+  this.baseDir = ".";
+  
+  // The class files. This can be a single file, a wild card like 
+  // *.class or just a base directory to add everything within it.
+  this.classFiles = "*.class";
+  
+  //Extend base object.
+  Target.call(this, Options);
 }
 Jar.prototype = new Target();
 
@@ -137,28 +165,40 @@ Jar.prototype.run = function (TargetName) {
   if (this.jarName.trim() === "") { throw ("Jar.run(): JAR output file name not set."); }
 
   if (isDef(this.mainClass) && this.mainClass.trim() !== "") {
-    opts += "e";
-    cmds.push(opts);
+    this.opts += "e";
+    cmds.push(this.opts);
     cmds.push(this.jarName);
     cmds.push(this.mainClass);
-    cmds.push("*.class");
+    cmds.push(this.classFiles);
   } else {
-    cmds.push(opts);
+    cmds.push(this.opts);
     cmds.push(this.jarName);
-    cmds.push("*.class");
+    cmds.push(this.classFiles);
   }
 
   var curDir = sys.getCurrentPath();
   var except = undefined;
   try {
     console.log("[" + TargetName + "] Creating JAR '" + this.jarName + "'.");
-    this.compileDir(TargetName, this.srcDir);
+    var ret = sys.exec(cmds, {}, this.baseDir);
+    if (ret.stdout.trim() !== "") {
+        console.log(ret.stdout);
+    }
+    if (ret.stderr.trim() !== "") {
+        console.error(ret.stderr);
+    }
+    if (ret.exitValue !== 0) {
+        throw ("[" + TargetName + "] Error! Compilation failure for '" + Directory + "/" + dcontents[i] + "'.");
+    }
   } catch (e) {
     except = e;
   } finally {
     file.setWorkingDir(curDir);
   }
-  if (isDef(except)) { throw (except); }
+  if (isDef(except)) {
+      console.log("Jar failure in directory '" + this.baseDir + "'. Cmds: " + cmds.join(" "));
+      throw (except);
+  }
 };
 
 Jar.prototype.constructor = Jar;
