@@ -82,6 +82,17 @@ HttpServer.prototype.start = function () {
 };
 
 /**
+ * Shuts down the server with the provided number of milliseconds to 
+ * wait for unresponsive threads. If timeout is reached the server will 
+ * forcefully kill remaining threads and then shutdown.
+ * @param TimeMills is a long with the number of milliseconds to wait.
+ */
+HttpServer.prototype.shutdown = function (TimeMills) {
+    TimeMills = setDef(TimeMills, 30000);
+    this.native.shutdown (TimeMills);
+};
+
+/**
  * Sets the SSL key store information and sets the use SSL flag 
  * for the server. This method must be called before calling 
  * startServer() method.

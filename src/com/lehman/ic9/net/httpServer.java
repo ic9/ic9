@@ -375,6 +375,19 @@ public class httpServer extends AbstractHandler
 	}
 	
 	/**
+	 * Shuts down the server with the provided number of milliseconds to 
+	 * wait for unresponsive threads. If timeout is reached the server will 
+	 * forcefully kill remaining threads and then shutdown.
+	 * @param TimeMills is a long with the number of milliseconds to wait.
+	 * @throws Exception Exception
+	 */
+	public void shutdown(long TimeMills) throws Exception {
+	    this.srv.setStopAtShutdown(true);
+	    this.srv.setStopTimeout(TimeMills);
+        this.srv.stop();
+    }
+	
+	/**
 	 * Static function that decodes the provided encoded basic 
 	 * authentication String.
 	 * @param Encoded is a Base64 encoded String provided by the browser.
