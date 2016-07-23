@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Utility methods for IC9 environment.
@@ -49,5 +50,12 @@ public class ic9util
 	    e.printStackTrace(ps);
 	    ps.close();
 	    return baos.toString();
+	}
+	
+	public static Long getLength (Map<String, Object> AnArray) {
+	    Object lobj = AnArray.get("length");
+	    if (lobj instanceof Integer) { return new Long((Integer)lobj); }
+	    else if (lobj instanceof Long) { return (Long)lobj; }
+	    else { return new Long(-1); }
 	}
 }

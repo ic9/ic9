@@ -861,7 +861,8 @@ public class jdbc
 			if(this.con == null) throw new ic9exception("jdbc.selectQuery(): Connector is null.");
 			stmt = this.con.prepareStatement(QueryString);
 			
-			for(int i = 0; i < (Long)ParamsList.get("length"); i++)
+			Long plen = ic9util.getLength(ParamsList);
+			for(int i = 0; i < plen; i++)
 			{
 				Object field = this.eng.invokeMethod(ParamsList, "get", i);
 				this.statementAddField(stmt, i+1, field);
@@ -922,7 +923,8 @@ public class jdbc
 			if(this.con == null) throw new ic9exception("jdbc.updateQuery(): Connector is null.");
 			stmt = this.con.prepareStatement(QueryString);
 			
-			for(int i = 0; i < (Long)ParamsList.get("length"); i++)
+			Long plen = ic9util.getLength(ParamsList);
+			for(int i = 0; i < plen; i++)
 			{
 				Object field = this.eng.invokeMethod(ParamsList, "get", i);
 				this.statementAddField(stmt, i+1, field);
