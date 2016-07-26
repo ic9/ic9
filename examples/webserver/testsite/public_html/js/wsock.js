@@ -23,7 +23,7 @@ function init () {
     textArea = document.getElementById("text-area");
     msgArea = document.getElementById("msg-area");
 
-    sock = new WebSocket("wss://" + window.location.host);
+    sock = new WebSocket("ws://" + window.location.host);
 
     sock.onmessage = function (evt) { 
        var msg = evt.data, ctnt;

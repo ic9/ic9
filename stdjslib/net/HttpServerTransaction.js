@@ -191,9 +191,16 @@ HttpServerRequest.prototype.getSession = function (CreateNew) {
  * null if not found.
  */
 HttpServerRequest.prototype.getBasicAuth = function () {
-    var aparts, Srvr, pparts, ret = {};
+    var aparts, Srvr, pparts, ret = {}, auth;
+    
     if (this.headers.hasOwnProperty("Authorization")) {
-        aparts = this.headers.Authorization.split(" ");
+        auth = this.headers.Authorization;
+    } else if (this.headers.hasOwnProperty("authorization")) {
+        auth = this.headers.authorization;
+    }
+    
+    if (isDef(auth)) {
+        aparts = auth.split(" ");
         if (aparts.length === 2) {
             Srvr = Java.type("com.lehman.ic9.net.httpServer");
             pparts = Srvr.decodeBasicAuth(aparts["1"]).split(":");

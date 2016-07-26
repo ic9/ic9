@@ -28,9 +28,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
+import org.eclipse.jetty.http2.HTTP2Cipher;
+import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.NegotiatingServerConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
@@ -78,6 +82,9 @@ public class httpServer extends AbstractHandler
 	
 	/** Flag to support websockets. */
 	private boolean useWebsockets = false;
+	
+	/** Enable HTTP2. */
+	private boolean useHttp2 = false;
 	
 	/** Websocket server factory. */
 	private WebSocketServletFactory wsfact = null;
@@ -223,35 +230,60 @@ public class httpServer extends AbstractHandler
 		
 		HashSessionIdManager hsim = new HashSessionIdManager();
         this.srv.setSessionIdManager(hsim);
+        
+        
 		
 		// SSL
 		if(this.useSsl)
-		{
+		{   
+		    // Https configuration
+		    HttpConfiguration cfg = new HttpConfiguration();
+            cfg.setSecureScheme("https");
+            cfg.setSecurePort(this.port);
+            cfg.setOutputBufferSize(32786);
+            cfg.setRequestHeaderSize(8192);
+            cfg.setResponseHeaderSize(8192);
+		    
+            // SSL context.
 			SslContextFactory contextFactory = new SslContextFactory();
 			contextFactory.setKeyStorePath(this.keyStoreFile);
 			contextFactory.setKeyStorePassword(this.keyStorePass);
+			if (this.useHttp2) {
+			    contextFactory.setCipherComparator(new HTTP2Cipher.CipherComparator());
+			}
 			
 			SSLServerSocketFactory ssf = (SSLServerSocketFactory)SSLServerSocketFactory.getDefault();
-			String[] defaultCiphers = ssf.getDefaultCipherSuites();
-			contextFactory.setIncludeCipherSuites(defaultCiphers);
+            String[] defaultCiphers = ssf.getDefaultCipherSuites();
+            contextFactory.setIncludeCipherSuites(defaultCiphers);
 			
-			SslConnectionFactory sslFact = new SslConnectionFactory(contextFactory, org.eclipse.jetty.http.HttpVersion.HTTP_1_1.toString());
+            // HTTPS1.1 config.
+            HttpConfiguration sslConfig = new HttpConfiguration(cfg);
+            sslConfig.addCustomizer(new SecureRequestCustomizer());
+            HttpConnectionFactory httpFact = new HttpConnectionFactory(sslConfig);
+            
+            SslConnectionFactory sslFact;
 			
-			HttpConfiguration cfg = new HttpConfiguration();
-			cfg.setSecureScheme("https");
-			cfg.setSecurePort(this.port);
-			cfg.setOutputBufferSize(32786);
-			cfg.setRequestHeaderSize(8192);
-			cfg.setResponseHeaderSize(8192);
-			HttpConfiguration sslConfig = new HttpConfiguration(cfg);
-			sslConfig.addCustomizer(new SecureRequestCustomizer());
-			HttpConnectionFactory httpFact = new HttpConnectionFactory(sslConfig);
-			
-			connector = new ServerConnector(this.srv, sslFact, httpFact);
+			if (this.useHttp2) {
+			    
+			    HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(sslConfig);
+			    NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
+			    ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
+			    alpn.setDefaultProtocol("h2");
+			    
+			    // SSL connection factory.
+			    sslFact = new SslConnectionFactory(contextFactory, alpn.getProtocol());
+			    
+			    // Create the connector.
+			    connector = new ServerConnector(this.srv, sslFact, alpn, h2, httpFact);
+			} else {
+			    // SSL connection factory.
+			    sslFact = new SslConnectionFactory(contextFactory, org.eclipse.jetty.http.HttpVersion.HTTP_1_1.toString());
+			    connector = new ServerConnector(this.srv, sslFact, httpFact);
+			}
 		}
 		else
 		{
-			connector = new ServerConnector(this.srv);
+            connector = new ServerConnector(this.srv);
 		}
 		
 		connector.setPort(this.port);
@@ -396,5 +428,16 @@ public class httpServer extends AbstractHandler
 	public static String decodeBasicAuth(String Encoded)
 	{
 		return new String(java.util.Base64.getDecoder().decode(Encoded.getBytes()));
+	}
+	
+	/**
+	 * Sets the flag to support HTTP2 over TLS. This must be set 
+	 * prior to running start. Also, this requires 
+	 * -Xbootclasspath/p:<pathToJar> to be set with the alpn-boot JAR 
+	 * for the exact Java build. (See: http://www.eclipse.org/jetty/documentation/9.4.x/alpn-chapter.html)
+	 * @param UseHttp2 is a boolean with true for http2 support and false for not. (Default is false.)
+	 */
+	public void useHttp2(boolean UseHttp2) {
+	    this.useHttp2 = UseHttp2;
 	}
 }

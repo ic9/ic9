@@ -30,5 +30,9 @@
 	<classpathentry kind="lib" path="lib-depends/jgit/org.eclipse.jgit-4.3.1.201605051710-r.jar"/>
 	<classpathentry kind="lib" path="lib-depends/slf4j/slf4j-api-1.7.21.jar"/>
 	<classpathentry kind="lib" path="lib-depends/slf4j/slf4j-nop-1.7.21.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/http2/http2-common-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/http2/http2-hpack-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/http2/http2-server-9.3.5.v20151012.jar"/>
+	<classpathentry kind="lib" path="lib-depends/jetty/jetty-alpn-server-9.3.5.v20151012.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

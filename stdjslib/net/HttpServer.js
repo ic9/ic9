@@ -156,4 +156,15 @@ HttpServer.prototype.handle = function (req, res) {
 };
 /*jslint unparam: false*/
 
+/**
+ * Sets the flag to support HTTP2 over TLS. This must be set 
+ * prior to running start. Also, this requires 
+ * -Xbootclasspath/p:pathToJar to be set with the alpn-boot JAR 
+ * for the exact Java build. (See: http://www.eclipse.org/jetty/documentation/9.4.x/alpn-chapter.html)
+ * @param UseHttp2 is a boolean with true for http2 support and false for not. (Default is false.)
+ */
+HttpServer.prototype.useHttp2 = function(UseHttp2) {
+    this.native.useHttp2(UseHttp2);
+};
+
 HttpServer.prototype.constructor = HttpServer;

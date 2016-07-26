@@ -72,6 +72,7 @@ TestServer.prototype.handle = function (req, res)
 	    if(creds === null) {
 	        res.setBasicAuth("Test Server");
 	    } else {
+		res.setHeader("Content-Type", "text/plain");
 	        res.println("un: " + creds.userName + " pw: " + creds.password);
 	        
 			// No script found, just print the request info.
