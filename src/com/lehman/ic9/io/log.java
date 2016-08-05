@@ -31,6 +31,7 @@ import com.lehman.ic9.ic9exception;
 public class log
 {
 	/** The Java logger. */
+    private Handler fh = null;
 	private Logger log = null;
 	
 	/**
@@ -42,24 +43,39 @@ public class log
 	 */
 	public log(String FileName, boolean Append) throws ic9exception
 	{
-		Handler fh = null;
-		try
-		{
-			fh = new FileHandler(FileName, Append);
-			fh.setLevel(Level.FINE);
-			fh.setFormatter(new logFormatter());
-			this.log = Logger.getLogger(FileName);
-			this.log.setUseParentHandlers(false);
-		    this.log.addHandler(fh);
-		}
-		catch (SecurityException e)
-		{
-			throw new ic9exception("log.log(): Security Exception: " + e.getMessage());
-		}
-		catch (IOException e)
-		{
-			throw new ic9exception("log.log(): IO Exception: " + e.getMessage());
-		}
+		this.configureLogger(FileName, Append);
+	}
+	
+	/**
+	 * Synchronized function configure logger is called by the constructor 
+	 * to setup the logger. It can also be called later to change the 
+	 * logger configuration. This can be useful for rotating log files.
+	 * @param FileName is a String with the file name to log to.
+     * @param Append is a boolean with append flag.
+     * @throws ic9exception an exception if something bad happens.
+	 */
+	public synchronized void configureLogger(String FileName, boolean Append) throws ic9exception {
+	    if (this.fh != null) {
+	        // close existing handler
+	        this.fh.close();
+	    }
+        try
+        {
+            this.fh = new FileHandler(FileName, Append);
+            this.fh.setLevel(Level.FINE);
+            this.fh.setFormatter(new logFormatter());
+            this.log = Logger.getLogger(FileName);
+            this.log.setUseParentHandlers(false);
+            this.log.addHandler(this.fh);
+        }
+        catch (SecurityException e)
+        {
+            throw new ic9exception("log.log(): Security Exception: " + e.getMessage());
+        }
+        catch (IOException e)
+        {
+            throw new ic9exception("log.log(): IO Exception: " + e.getMessage());
+        }
 	}
 	
 	/**

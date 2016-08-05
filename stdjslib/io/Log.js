@@ -34,6 +34,21 @@ function Log(FileName, Append) {
 Log.prototype = new BaseObj();
 
 /**
+ * Synchronized function to configure the logger. It can be called to change the 
+ * logger configuration. This can be useful for rotating log files.
+ * @param FileName is a String with the file name to log to.
+ * @param Append is a boolean with append flag.
+ * @throws ic9exception an exception if something bad happens.
+ */
+Log.prototype.configureLogger = function (FileName, Append) {
+    var NativeLog;
+    if (!isDef(FileName)) { throw ("Log.configureLogger(): File name is a required parameter."); }
+    Append = setDef(Append, true);
+    this.native.configureLogger(FileName, Append);
+    return this;
+};
+
+/**
  * Init creates a new logging object with the provided 
  * file name and append to file flag.
  * @param FileName is a String with the file name to log to.
