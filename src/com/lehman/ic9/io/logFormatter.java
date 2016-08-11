@@ -29,13 +29,13 @@ import java.util.logging.LogRecord;
 public class logFormatter extends Formatter
 {
 	/** SimpleDateFormat to provide time format. */
-	private SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
+	private SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS z");
 	
 	/**
 	 * Default constructor.
 	 */
 	public logFormatter() { 
-	    this.date_format.setTimeZone(TimeZone.getTimeZone("UTC"));
+	    
 	}
 	
 	@Override
