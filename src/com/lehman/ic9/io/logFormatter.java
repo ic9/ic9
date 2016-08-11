@@ -18,6 +18,7 @@ package com.lehman.ic9.io;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
@@ -33,7 +34,9 @@ public class logFormatter extends Formatter
 	/**
 	 * Default constructor.
 	 */
-	public logFormatter() { }
+	public logFormatter() { 
+	    this.date_format.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 	
 	@Override
 	public String format(LogRecord rec)
