@@ -763,15 +763,17 @@ public class httpClient
 			
 			this.getResponseInfo(ret, resp);
 			
-			if(getString) ret.put("content", this.getContentString(ent.getContent()));
-			else
-			{
-				Map<String,Object> obj = this.eng.newObj("Buffer");
-				obj.put("data", this.getContentBinary(ent.getContent()));
-				ret.put("content", obj);
+			if (ent != null) {
+    			if(getString) ret.put("content", this.getContentString(ent.getContent()));
+    			else
+    			{
+    				Map<String,Object> obj = this.eng.newObj("Buffer");
+    				obj.put("data", this.getContentBinary(ent.getContent()));
+    				ret.put("content", obj);
+    			}
+    			
+    			EntityUtils.consume(ent);
 			}
-			
-			EntityUtils.consume(ent);
 		}
 		catch (ClientProtocolException e) { throw new ic9exception("httpClient.performRequest(): Client protocol exception. " + e.getMessage()); }
 		catch (IOException e) { throw new ic9exception("httpClient.performRequest(): IO exception. " + e.getMessage()); }
@@ -779,7 +781,7 @@ public class httpClient
 		catch (NoSuchAlgorithmException e) { throw new ic9exception("httpClient.performRequest(): No such algorithm exception. " + e.getMessage()); }
 		catch (KeyStoreException e) { throw new ic9exception("httpClient.performRequest(): Key store exception. " + e.getMessage()); }
 		catch (AuthenticationException e) { throw new ic9exception("httpClient.performRequest(): Authentication exception. " + e.getMessage()); }
-		catch (Exception e) { throw new ic9exception("httpClient.performRequest(): Unhandled exception. " + e.getMessage()); }
+		catch (Exception e) { e.printStackTrace(); throw new ic9exception("httpClient.performRequest(): Unhandled exception. " + e.getMessage()); }
 		finally
 		{
 			// Reset credentials
