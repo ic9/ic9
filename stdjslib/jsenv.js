@@ -435,6 +435,7 @@ Object.defineProperty(String.prototype, 'contains', {
 Object.defineProperty(String.prototype, 'escapeJson', {
     value : function () {
         return this
+        .replace(/[\\]/g, '\\\\')
         .replace(/[\"]/g, '\\"')
         .replace(/[\/]/g, '\\/')
         .replace(/[\b]/g, '\\b')
