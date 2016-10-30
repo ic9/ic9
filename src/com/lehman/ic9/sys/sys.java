@@ -239,6 +239,7 @@ public class sys
 	public static void print(Object toprint)
 	{
 		System.out.print(toprint.toString());
+		System.out.flush();
 	}
 	
 	/**
@@ -309,7 +310,13 @@ public class sys
 		else if((boolean) Eng.invokeFunction("isArr", Cmds))
 		{
 			Map<String, Object> nhobj = (Map<String, Object>) Cmds;
-			Long nhlen = (Long)nhobj.get("length");
+			Object lobj = nhobj.get("length");
+			Long nhlen = (long) 0;
+			if (lobj instanceof Long) {
+			    nhlen = (Long)lobj;
+			} else if (lobj instanceof Integer) {
+			    nhlen = ((Integer)lobj).longValue();
+			}
 			cmds = new String[nhlen.intValue()];
 			for(int i = 0; i < nhlen; i++)
 			{
