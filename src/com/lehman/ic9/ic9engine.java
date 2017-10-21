@@ -83,7 +83,8 @@ public class ic9engine
 	 * @throws ic9exception Throws exception if failure when calling include or obtaining the root java console.
 	 * @throws NoSuchMethodException 
 	 */
-	private void init() throws ScriptException, ic9exception, NoSuchMethodException
+	@SuppressWarnings("unchecked")
+    private void init() throws ScriptException, ic9exception, NoSuchMethodException
 	{
     	this.eng.put("Env", this.env);
     	this.env.include("jsenv.js");			// Javascript base. Independent of ic9 environment.
@@ -93,7 +94,7 @@ public class ic9engine
     	// should still show true for mingw/msys.
     	if (sys.getOsName().toLowerCase().contains("windows")) {
     	    Map<String, Object> tenv = (Map<String, Object>) this.eng.get("$ENV");
-    	    if (!tenv.containsKey("SHELL")) { this.isNixEnv = false; }
+    	    if (tenv != null && !tenv.containsKey("SHELL")) { this.isNixEnv = false; }
     	}
     	
     	// Setup console ...
