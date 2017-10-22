@@ -1,5 +1,7 @@
 package com.lehman.ic9.ui;
 
+import java.util.ArrayList;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -65,6 +67,14 @@ public class fxApplication extends Application {
     public void launchApp() {
         String[] args = new String[0];
         launch(args);
+    }
+    
+    public ArrayList<String> getStyleSheets() {
+        ArrayList<String> styleSheets = new ArrayList<String>();
+        if(stage instanceof App) {
+            styleSheets = ((App)stage).getStyleSheets();
+        }
+        return styleSheets;
     }
     
     @Override

@@ -5,6 +5,11 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.script.ScriptException;
+
+import com.lehman.ic9.ic9engine;
+import com.lehman.ic9.ic9exception;
+
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -12,18 +17,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import javax.script.ScriptException;
-
-import com.lehman.ic9.ic9engine;
-import com.lehman.ic9.ic9exception;
 
 public class App extends Stage {
     /*
@@ -52,46 +51,18 @@ public class App extends Stage {
     private String style = null;
     private String id = null;
     
-    public App(ic9engine Eng, Map<String, Object>Jobj, String title, Integer width, Integer height) {
-        // Set engine and javascript object.
-        this.eng = Eng;
-        this.jobj = Jobj;
-        
-        this.title = title;
-        if((width != null)&&(height != null))
-            this.setBounds(width, height);
-    }
-    
-    
-    //public void setTitle(String Title) { this.title = Title; }
-    public void setBounds(int Width, int Height) {
-        this.width = Width;
-        this.height = Height;
-    }
-    
-    //public Scene getScene() { return this.scene; }
-    //public void setScene(Scene theScene) { this.scene = theScene; }
-    public Parent getLayout() { return this.layout; }
-    public void setLayout(Parent Layout) { this.layout = Layout; }
-    public ArrayList<String> getStyleSheets() { return this.styleSheets; }
-    public void setStyleSheets(ArrayList<String> StyleSheets) { this.styleSheets = StyleSheets; }
-    
-    public void newFxApp(ic9engine Eng, Map<String, Object>Jobj, String Title, int Width, int Height) {
+    public App(ic9engine Eng, Map<String, Object>Jobj, String Title, Integer Width, Integer Height) {
         // Set engine and javascript object.
         this.eng = Eng;
         this.jobj = Jobj;
         
         this.title = Title;
-        this.width = Width;
-        this.height = Height;
-        
-        fxApplication.getInstance().initApp();
-        
-        // Default layout
-        FlowPane fp = new FlowPane();
-        fp.setVgap(8);
-        fp.setHgap(4);
-        this.layout = fp;
+        if (Width != null) {
+            this.width = Width;
+        }
+        if (Height != null) {
+            this.height = Height;
+        }
     }
     
     public void show(boolean block) {
@@ -139,32 +110,33 @@ public class App extends Stage {
         this.handleBlock();
     }
     
-    public void _close() {
-        this.close();
-        fireEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
+    public void shutdown() {
+        final WindowEvent we = new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                fireEvent(we);
+                close();
+                Platform.exit();
+            }
+        });
     }
     
-    private void handleBlock() {
-        if(this.block) {
-            while(this.block) { try { Thread.sleep(200); } catch (InterruptedException e) { e.printStackTrace(); } }
-        }
-    }
-    
-    public void _add(Object FxObj) throws ic9exception {
+    public void add(Object FxObj) throws ic9exception {
         if((FxObj != null)&&(FxObj instanceof Node)) {
             if(layout == null) layout = new HBox();
             
-            if(this.layout instanceof Pane)
+            if(this.layout instanceof Pane) {
                 ((Pane)this.layout).getChildren().add((Node)FxObj);
-            else if(this.layout instanceof ScrollPane)
+            } else if(this.layout instanceof ScrollPane) {
                 ((ScrollPane)this.layout).setContent((Node)FxObj);
-        }
-        else
+            }
+        } else {
             throw new ic9exception("App.add(): Provided object is null or not an instance of javafx Node.");
+        }
     }
     
-    public void _addStyleSheet(String SsFile) throws ic9exception
-    {
+    public void addStyleSheet(String SsFile) throws ic9exception {
         // If default stage not set, set it now.
         final fxApplication app = fxApplication.getInstance();
         app.setStage(this);
@@ -172,8 +144,7 @@ public class App extends Stage {
         final File f = new File(SsFile);
         try {
             this.styleSheets.add(f.toURI().toURL().toExternalForm());
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new ic9exception("App.addStyleSheet(): Malformed URL exception. " + e.getMessage());
         }
         
@@ -193,8 +164,9 @@ public class App extends Stage {
     }
     
     public void registerOnShown() {
-        if(!this.jobj.containsKey("onShow")) this.setOnShown(null);
-        else {
+        if(!this.jobj.containsKey("onShow")) {
+            this.setOnShown(null);
+        } else {
             setOnShown(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent event) {
@@ -231,12 +203,20 @@ public class App extends Stage {
     /*
      * OS Functions
      */
-    public static void _openInBrowser(String Uri) {
+    public static void openInBrowser(String Uri) {
         fxApplication inst = fxApplication.getInstance();
         inst.getHostServices().showDocument(Uri);
     }
     
     /* Getters */
+    public Parent getLayout() {
+        return this.layout;
+    }
+    
+    public ArrayList<String> getStyleSheets() {
+        return this.styleSheets;
+    }
+    
     public boolean getMaximized() {
         return isMaximized();
     }
@@ -252,14 +232,22 @@ public class App extends Stage {
     }
     
     /* Setters */
-    public void _setLayout(Object LayoutObj) throws ic9exception {
+    public void setStyleSheets(ArrayList<String> StyleSheets) {
+        this.styleSheets = StyleSheets;
+    }
+    
+    public void setLayout(Parent Layout) {
+        this.layout = Layout;
+    }
+    
+    public void setLayout(Object LayoutObj) throws ic9exception {
         if((LayoutObj != null)&&(LayoutObj instanceof Node))
             this.layout = (Parent) LayoutObj;
         else
             throw new ic9exception("App.setLayout(): Provided object is null or not an instance of javafx Parent.");
     }
     
-    public void _setMenuBar(Object MenuBarObj) throws ic9exception {
+    public void setMenuBar(Object MenuBarObj) throws ic9exception {
         if((MenuBarObj != null)&&(MenuBarObj instanceof MenuBar))
             this.mBar = (MenuBar)MenuBarObj;
         else
@@ -284,5 +272,14 @@ public class App extends Stage {
                 }
             }
         });
+    }
+    
+    /*
+     * Private helpers.
+     */
+    private void handleBlock() {
+        if(this.block) {
+            while(this.block) { try { Thread.sleep(200); } catch (InterruptedException e) { e.printStackTrace(); } }
+        }
     }
 }
