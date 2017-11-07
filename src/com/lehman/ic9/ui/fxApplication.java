@@ -6,6 +6,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * @author Austin Lehman
+ */
 public class fxApplication extends Application {
     // App instance.
     private static fxApplication instance = null;

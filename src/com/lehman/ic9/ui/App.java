@@ -274,6 +274,10 @@ public class App extends Stage {
         });
     }
     
+    public Node getRoot() {
+        return this.scene.getRoot();
+    }
+    
     /*
      * Private helpers.
      */
